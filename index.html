@@ -19,7 +19,7 @@
   body{padding:20px 16px 40px}
   .seite{max-width:640px;margin:0 auto}
   h1{color:#F2F5F9;font-size:clamp(24px,5vw,32px);font-weight:800;margin:0 0 6px;letter-spacing:-.3px}
-  .unter{margin:0 0 18px;color:#8C9AAB;font-size:15px}
+  .unter{margin:0 0 16px;color:#8C9AAB;font-size:15px}
   #nutritionBody{background:#f2f5f9;border-radius:18px;padding:12px}
   .nut-card{background:#fff}
   .profile-field{display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -37,6 +37,11 @@
   .app b{color:#F2F5F9}
   .app b{display:block;font-size:17px;margin-bottom:4px}
   .app a{color:#fff;font-weight:700}
+  .app ul{margin:10px 0 0;padding-left:18px}
+  .app li{margin:6px 0}
+  .app li span{color:#F2F5F9;font-weight:700}
+  .tipp{margin:-8px 0 18px;color:#C9D3DF;font-size:14px}
+  .tipp a{color:#FB8E5A;font-weight:700}
   .app .links{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
   .app .links a{background:#F26A2C;border-radius:8px;padding:9px 14px;text-decoration:none}
 </style>
@@ -49,12 +54,18 @@
 <main class="seite">
   <h1>Kalorienrechner</h1>
   <p class="unter">Wie viel du essen solltest, um abzunehmen, dein Gewicht zu halten oder aufzubauen — mit Grundumsatz, Alltag, Sport und Makronährstoffen.</p>
+  <p class="tipp">Noch genauer rechnet er in der <a href="#app">TrainLogic-App</a>: mit deinem echten Training, und alles bleibt gespeichert.</p>
 
   <div id="nutritionBody"></div>
 
-  <div class="app">
-    <b>In der App rechnet er mit deinem echten Training</b>
-    Derselbe Rechner steckt in TrainLogic — dort nimmt er den Trainingsverbrauch aus deinen geloggten Einheiten oder deinem Trainingsplan, statt ihn zu schätzen.
+  <div class="app" id="app">
+    <b>Genauer und gespeichert: der Rechner in der TrainLogic-App</b>
+    Hier im Browser schätzt du dein Training über eine Liste. In der App steckt derselbe Rechner — aber er kennt dich:
+    <ul>
+      <li><span>Genauer:</span> Den Trainingsverbrauch nimmt er aus deinen geloggten Einheiten der letzten vier Wochen oder aus deinem Trainingsplan, statt ihn zu schätzen.</li>
+      <li><span>Mit der Waage abgeglichen:</span> Aus deinen Wiegungen zeichnet die App deinen Verlauf und sagt dir, ob du mehr oder weniger essen solltest.</li>
+      <li><span>Alles gespeichert:</span> Körperdaten, Wiegungen und Trainings liegen in der App. Du tippst nichts doppelt, und die Rechnung wird mit jeder Woche besser.</li>
+    </ul>
     <div class="links">
       <a href="https://apps.apple.com/app/id6801099302" target="_blank" rel="noopener">App Store</a>
       <a href="https://play.google.com/store/apps/details?id=com.benja.trainlogic" target="_blank" rel="noopener">Google Play</a>
