@@ -759,7 +759,7 @@
       </div>`}
 
       <button id="nutRechnenBtn" class="primary-btn overlay-full-btn" type="button">Berechnen</button>
-      <div id="nutErgebnis"></div>
+      <div id="nutErgebnis">${WEB ? webErgebnis(null) : ""}</div>
     `;
   }
 
@@ -850,7 +850,56 @@
       </div>`;
   }
 
+  /* WEBSEITE: das Ergebnis kompakt in EINER Karte. Der Rahmen auf der
+     Wix-Seite hat eine feste Hoehe; was hier Platz braucht, steht vor dem
+     Berechnen als leere Flaeche da (Benjamin, 29.09.2026: "am Handy muesste
+     man sonst zu weit scrollen, das macht keiner"). Deshalb steht vorher
+     dieselbe Karte mit Strichen statt Zahlen — gleich hoch, kein Sprung.
+     Die Hinweise zur Schaetzung erklaert die FAQ unter dem Rechner. */
+  function webErgebnis(r) {
+    const leer = !r;
+    const w = (v) => (leer ? "—" : v);
+    const a = leer ? { grundumsatz: 0, neat: 0, training: 0, tef: 0 } : r.anteile;
+    const zielText = leer ? "Dein Ergebnis, pro Tag"
+      : (r.ziel === "abnehmen" ? "Zum Abnehmen" : r.ziel === "zunehmen" ? "Zum Aufbauen" : "Zum Halten") + ", pro Tag";
+    let zeile = "Füll die Angaben oben aus und tipp auf „Berechnen“.";
+    if (!leer) {
+      const kg = String(r.kgProWoche).replace(".", ",");
+      zeile = r.rateProWoche > 0
+        ? `${r.abweichungKcal > 0 ? "+" : ""}${r.abweichungKcal} kcal am Tag — rund <b>${kg} kg je Woche</b> ${r.ziel === "abnehmen" ? "weniger" : "mehr"}.`
+        : `Gesamtumsatz ${r.gesamtumsatzKcal} kcal am Tag.`;
+    }
+    return `
+      <div class="nut-card nut-web-ergebnis${leer ? " nut-web-leer" : ""}">
+        <div class="nut-ziel">
+          <div class="nut-ziel-wert">${w(r && r.zielKcal)} kcal</div>
+          <div class="nut-ziel-label">${zielText}</div>
+        </div>
+        <div class="nut-hinweis" style="text-align:center">${zeile}</div>
+        <div class="nut-makros" style="margin-top:10px">
+          <div class="nut-makro"><div class="nut-makro-wert">${w(r && r.eiweissG)} g</div><div class="nut-makro-name">Eiweiß</div></div>
+          <div class="nut-makro"><div class="nut-makro-wert">${w(r && r.fettG)} g</div><div class="nut-makro-name">Fett</div></div>
+          <div class="nut-makro"><div class="nut-makro-wert">${w(r && r.khG)} g</div><div class="nut-makro-name">Kohlenhydrate</div></div>
+        </div>
+        <div class="nut-balken" style="margin-top:12px">
+          <span class="nut-gu" style="width:${a.grundumsatz}%"></span>
+          <span class="nut-neat" style="width:${a.neat}%"></span>
+          <span class="nut-training" style="width:${a.training}%"></span>
+          <span class="nut-tef" style="width:${a.tef}%"></span>
+        </div>
+        <div class="nut-legende nut-legende-zwei">
+          <div><i style="background:#042c4c"></i>Grundumsatz<b>${w(r && r.grundumsatzKcal)}</b></div>
+          <div><i style="background:#2f6f9f"></i>Alltag<b>${w(r && r.neatKcal)}</b></div>
+          <div><i style="background:#4fa3d1"></i>Training<b>${w(r && r.trainingKcal)}</b></div>
+          <div><i style="background:#a9cde4"></i>Verdauung<b>${w(r && r.tefKcal)}</b></div>
+        </div>
+        <div class="nut-hinweis">${leer ? "Jede Formel liegt um rund 10 Prozent daneben — nimm die Zahl als Startwert."
+          : "Startwert: Formeln liegen um rund 10 Prozent daneben. Nach zwei bis drei Wochen an deinem Gewicht nachjustieren."}</div>
+      </div>`;
+  }
+
   function ergebnisBauen(r) {
+    if (WEB && r.vollstaendig) return webErgebnis(r);
     if (!r.vollstaendig) {
       return `<div class="nut-card"><div class="nut-card-title">Es fehlt etwas</div>
         <ul class="nut-notizen">${r.hinweise.map((h) => `<li>${esc(h)}</li>`).join("")}</ul></div>`;

@@ -42,13 +42,13 @@
   .app li span{color:#F2F5F9;font-weight:700}
   .eingebettet h1,.eingebettet .unter,.eingebettet .faq{display:none}
   .eingebettet body{padding-top:4px}
-  /* Der Rahmen auf der Wix-Seite hat eine FESTE Hoehe, bemessen fuer die Seite
-     MIT Ergebnis. Vor dem Berechnen stuende darunter sonst gut 1000 px Leere
-     vor der FAQ — deshalb haelt eine Vorschau-Karte den Platz. Hoehen am
-     29.09.2026 gemessen: Ergebnis 1137 px bei 980, 1049 px bei 320 Breite. */
-  .eingebettet #nutErgebnis:empty{display:block;min-height:1080px;border:2px dashed #b9c7d6;border-radius:14px;margin-bottom:12px;background:#f7f9fc}
-  .eingebettet #nutErgebnis:empty::before{content:"Dein Ergebnis erscheint hier: Kalorien pro Tag, woraus sie sich zusammensetzen und deine Makros. Tipp oben auf „Berechnen“.";display:block;padding:28px 22px;text-align:center;color:rgba(4,44,76,.6);font-size:15px;font-weight:600}
-  @media (max-width:500px){.eingebettet #nutErgebnis:empty{min-height:1000px}}
+  /* Ergebnis kompakt in einer Karte (webErgebnis in nutrition-tool.js);
+     vor dem Berechnen steht dieselbe Karte mit Strichen. */
+  .nut-legende-zwei{grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:10px}
+  .nut-legende-zwei div{min-width:0}
+  @media (max-width:420px){.nut-legende-zwei{grid-template-columns:1fr}}
+  .nut-web-leer .nut-ziel-wert,.nut-web-leer .nut-makro-wert,.nut-web-leer .nut-legende b{color:#b9c7d6}
+  .nut-web-leer .nut-balken{background:#eef2f7}
   .faq{margin-top:26px}
   .faq h2{color:#F2F5F9;font-size:20px;margin:0 0 12px}
   .faq details{background:#0C1A2B;border:1px solid #1B2C40;border-radius:12px;margin:0 0 8px}
