@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kalorienrechner – TrainLogic</title>
-<meta name="description" content="Kalorienrechner mit Körperfett-Bildern, Maßband-Formel, Schritten und Sport: Grundumsatz, Gesamtumsatz, Zielkalorien und Makros zum Abnehmen, Halten oder Aufbauen.">
+<title>Kalorienrechner zum Abnehmen – Kalorienbedarf berechnen | TrainLogic</title>
+<meta name="description" content="Kalorienrechner zum Abnehmen: Kalorienbedarf, Kaloriendefizit und Makros kostenlos berechnen – mit Körperfett-Bildern, Schritten und Sport.">
 <!-- Eingebettet auf fitnessdoneright.de unter Tools; das ist das Original fuer Suchmaschinen. -->
 <link rel="canonical" href="https://www.fitnessdoneright.de/kalorienrechner">
 <link rel="stylesheet" href="css/nutrition.css">
@@ -40,6 +40,13 @@
   .app ul{margin:10px 0 0;padding-left:18px}
   .app li{margin:6px 0}
   .app li span{color:#F2F5F9;font-weight:700}
+  .eingebettet h1,.eingebettet .unter,.eingebettet .faq{display:none}
+  .eingebettet body{padding-top:4px}
+  .faq{margin-top:26px}
+  .faq h2{color:#F2F5F9;font-size:20px;margin:0 0 12px}
+  .faq details{background:#0C1A2B;border:1px solid #1B2C40;border-radius:12px;margin:0 0 8px}
+  .faq summary{cursor:pointer;padding:13px 16px;color:#F2F5F9;font-weight:700;font-size:15.5px}
+  .faq p{margin:0;padding:0 16px 14px;color:#C9D3DF;font-size:15px}
   .tipp{margin:-8px 0 18px;color:#C9D3DF;font-size:14px}
   .tipp a{color:#FB8E5A;font-weight:700}
   .app .links{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
@@ -48,11 +55,14 @@
 <script>
   // Web-Modus: kein Profil, keine Logs, kein Plan (siehe WEB in nutrition-tool.js).
   window.NutritionToolWeb = true;
+  // Auf fitnessdoneright.de traegt die Wix-Seite Ueberschrift, Einleitung
+  // und FAQ als echten Text (fuer Suchmaschinen); im Rahmen fallen sie hier weg.
+  if (/[?&]eingebettet\b/.test(location.search)) document.documentElement.classList.add("eingebettet");
 </script>
 </head>
 <body>
 <main class="seite">
-  <h1>Kalorienrechner</h1>
+  <h1>Kalorienrechner zum Abnehmen</h1>
   <p class="unter">Wie viel du essen solltest, um abzunehmen, dein Gewicht zu halten oder aufzubauen — mit Grundumsatz, Alltag, Sport und Makronährstoffen.</p>
   <p class="tipp">Noch genauer rechnet er in der <a href="#app">TrainLogic-App</a>: mit deinem echten Training, und alles bleibt gespeichert.</p>
 
@@ -62,15 +72,29 @@
     <b>Genauer und gespeichert: der Rechner in der TrainLogic-App</b>
     Hier im Browser schätzt du dein Training über eine Liste. In der App steckt derselbe Rechner — aber er kennt dich:
     <ul>
-      <li><span>Genauer:</span> Den Trainingsverbrauch nimmt er aus deinen geloggten Einheiten der letzten vier Wochen oder aus deinem Trainingsplan, statt ihn zu schätzen.</li>
-      <li><span>Mit der Waage abgeglichen:</span> Aus deinen Wiegungen zeichnet die App deinen Verlauf und sagt dir, ob du mehr oder weniger essen solltest.</li>
-      <li><span>Alles gespeichert:</span> Körperdaten, Wiegungen und Trainings liegen in der App. Du tippst nichts doppelt, und die Rechnung wird mit jeder Woche besser.</li>
+      <li><span>Dein Kalorienbedarf bleibt gespeichert:</span> einmal eingetragen, jederzeit griffbereit — du tippst nichts doppelt.</li>
+      <li><span>Du siehst, was dein Training verbrennt:</span> Nach jeder Einheit zeigt die App die verbrauchten Kalorien, und der Rechner nimmt genau diese Werte statt einer Schätzung.</li>
+      <li><span>Dein Gewichtsverlauf wird gespeichert:</span> Die App zeigt ihn als Kurve und sagt dir, ob du mehr oder weniger essen solltest. Hier auf der Webseite geht das nicht.</li>
     </ul>
     <div class="links">
       <a href="https://apps.apple.com/app/id6801099302" target="_blank" rel="noopener">App Store</a>
       <a href="https://play.google.com/store/apps/details?id=com.benja.trainlogic" target="_blank" rel="noopener">Google Play</a>
     </div>
   </div>
+
+  <section class="faq">
+    <h2>Fragen zum Kalorienrechner</h2>
+    <details><summary>Wie benutze ich den Kalorienrechner?</summary><p>Trag Geschlecht, Gewicht, Größe und Alter ein. Wähl beim Körperfettanteil die Figur, die dir am ähnlichsten sieht, oder miss mit dem Maßband. Dann deine Schritte pro Tag ohne Training und deinen Sport pro Woche eintragen, als Ziel „Abnehmen“ wählen und auf „Berechnen“ tippen. Du bekommst deine Kalorien pro Tag und die Aufteilung in Eiweiß, Fett und Kohlenhydrate.</p></details>
+    <details><summary>Wie viele Kalorien sollte ich essen, um abzunehmen?</summary><p>Der Rechner plant ein Defizit von 0,3 bis 0,7 Prozent deines Körpergewichts pro Woche – je mehr Körperfett, desto schneller darf es gehen. Bei 80 kg und 0,5 Prozent sind das rund 0,4 kg pro Woche, also etwa 440 kcal weniger am Tag, als du verbrauchst. Ohne Körperfettanteil nimmt er die mittlere Rate von 0,5 Prozent.</p></details>
+    <details><summary>Warum rechnet der Rechner nicht mit einem größeren Kaloriendefizit?</summary><p>Weil zu wenig Essen vor allem Muskeln kostet, müde macht und selten lange durchgehalten wird. Der Rechner hat deshalb zwei Untergrenzen: Er geht nicht unter deinen Grundumsatz, und wer viel trainiert, behält genug Energie fürs Training.</p></details>
+    <details><summary>Wie genau ist das Ergebnis?</summary><p>Jede Formel für den Kalorienbedarf liegt bei einzelnen Menschen um rund 10 Prozent daneben. Nimm die Zahl als Startwert, wieg dich zwei bis drei Wochen lang regelmäßig und passe die Kalorien an deinen echten Gewichtsverlauf an.</p></details>
+    <details><summary>Welche Methode für den Körperfettanteil ist die beste?</summary><p>Die Figuren sind eine Schätzung und bestimmen nur, wie schnell du abnehmen solltest. Mit dem Maßband wird es genauer (Navy-Formel: Hals und Bauch, bei Frauen Hals, Taille und Hüfte). Ein gemessener Wert von Körperanalyse-Waage, Caliper oder DEXA fließt direkt in den Grundumsatz ein.</p></details>
+    <details><summary>Wie viel Eiweiß brauche ich beim Abnehmen?</summary><p>Der Rechner plant beim Abnehmen rund 2 g Eiweiß je Kilogramm Körpergewicht ein, mit gemessenem Körperfett 2,4 g je Kilogramm fettfreier Masse. Viel Eiweiß schützt die Muskeln im Kaloriendefizit und macht satt.</p></details>
+    <details><summary>Warum trage ich Schritte und Sport getrennt ein?</summary><p>Die Schritte sind deine Bewegung neben dem Training: Arbeitsweg, Einkauf, Treppen. Den Sport trägst du mit Dauer und Häufigkeit ein. Der Rechner zieht davon den Teil ab, den du auch in Ruhe verbraucht hättest – so zählt nichts doppelt.</p></details>
+    <details><summary>Was kann die TrainLogic-App besser als der Rechner hier?</summary><p>In der App steckt derselbe Rechner, aber er kennt dein Training. Dein Kalorienbedarf bleibt gespeichert, und nach jeder Einheit siehst du direkt, wie viele Kalorien du damit verbraucht hast – der Rechner nimmt diese Werte aus deinen Trainings statt aus einer Schätzung. Außerdem speichert die App deinen Gewichtsverlauf, zeigt ihn als Kurve und sagt dir, ob du mehr oder weniger essen solltest. Die App lädst du kostenlos für iPhone und Android.</p></details>
+    <details><summary>Wird mein Gewichtsverlauf auf der Webseite gespeichert?</summary><p>Nein. Die Webseite rechnet deinen Bedarf aus, einen Gewichtsverlauf führt sie nicht. Deine Eingaben bleiben höchstens in deinem Browser, auf einem Server speichern wir nichts. Wer sein Gewicht über Wochen festhalten und den Kalorienbedarf daran anpassen will, nutzt die TrainLogic-App.</p></details>
+    <details><summary>Kostet der Kalorienrechner etwas?</summary><p>Nein. Der Rechner ist kostenlos und braucht keine Anmeldung – hier auf der Webseite und in der TrainLogic-App.</p></details>
+  </section>
 </main>
 <script src="js/nutrition-calc.js"></script>
 <script src="js/nutrition-tool.js"></script>

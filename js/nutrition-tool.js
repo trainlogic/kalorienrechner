@@ -256,6 +256,9 @@
      morgens und abends wiegt, soll nicht zwei Punkte fuer denselben Tag
      erzeugen und damit die Ausgleichsgerade an einem Tag festnageln. */
   function verlauf() {
+    // Die Webseite fuehrt keinen Verlauf (Benjamin, 29.09.2026): gespeichert
+    // wird er nur in der App.
+    if (WEB) return [];
     try {
       const liste = JSON.parse(localStorage.getItem(VERLAUF) || "[]");
       return Array.isArray(liste) ? liste : [];
@@ -744,13 +747,16 @@
         <div style="margin-top:10px">${zielErklaerung()}</div>
       </div>
 
-      <div class="nut-card">
+      ${WEB ? `<div class="nut-card">
+        <div class="nut-card-title">Gewichtsverlauf</div>
+        <div class="nut-gefunden">Hier im Browser wird dein Gewicht nicht gespeichert. In der TrainLogic-App trägst du jede Wiegung ein, siehst deinen Verlauf als Kurve, und der Rechner passt deine Kalorien daran an.</div>
+      </div>` : `<div class="nut-card">
         <div class="nut-mit-hilfe">
           <div class="nut-card-title">Gewichtsverlauf</div>
           ${hilfe("verlauf", "Dein Gewicht schwankt jeden Tag um bis zu einem Kilo — Wasser, Essen, Salz. Aus zwei Werten lässt sich der echte Trend davon nicht trennen. Ab <b>drei Wiegungen über zwei Wochen</b> legen wir eine Linie durch alle Punkte, und die zeigt, wohin es wirklich geht. Wieg dich dafür am besten immer zur selben Zeit: morgens, nüchtern, nach dem Klo.")}
         </div>
         ${verlaufBereich()}
-      </div>
+      </div>`}
 
       <button id="nutRechnenBtn" class="primary-btn overlay-full-btn" type="button">Berechnen</button>
       <div id="nutErgebnis"></div>
