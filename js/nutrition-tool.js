@@ -432,7 +432,10 @@
     const reihe = LEITER[zustand.geschlecht];
     return `<div class="nut-kfa-grid">` + reihe.map((s, i) =>
       `<button type="button" data-feld="kfaBild" data-wert="${i}" aria-pressed="${zustand.kfaBild === i}">` +
-      `<img src="img/kfa/${zustand.geschlecht}-${i + 1}.png" alt="Koerperfettanteil etwa ${esc(s.band)}" loading="lazy">` +
+      // Feste Masse: die Bilder laden verzoegert und hatten bis dahin die
+      // Hoehe 0 — die Seite sprang beim Laden um gut 150 px (auf der
+      // Webseite am 29.09.2026 gemessen, dort hat der Rahmen eine feste Hoehe).
+      `<img src="img/kfa/${zustand.geschlecht}-${i + 1}.png" alt="Koerperfettanteil etwa ${esc(s.band)}" loading="lazy" width="300" height="${zustand.geschlecht === "frau" ? 336 : 307}">` +
       `<span>${esc(s.band)}</span></button>`
     ).join("") + `</div>`;
   }
