@@ -1,0 +1,498 @@
+/* Kalorienrechner (js/nutrition-tool.js, Rechnung in js/nutrition-calc.js).
+   Alles unter .nut- gescopet, damit nichts in die bestehenden Overlays
+   ausblutet — dieselbe Trennung wie bei t2b-lernen.css und share-card.css. */
+
+.nut-card {
+  background: #fff;
+  border: 1px solid #e6e9ee;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.nut-card-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: rgba(4, 44, 76, .55);
+  margin-bottom: 10px;
+}
+
+.nut-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+/* Der Knopf neben einem Eingabefeld. Er bringt aus style.css zwei Werte mit,
+   die in dieser Zeile beide nicht stimmen:
+
+   `width: 200px` — am 22.08.2026 am iPhone gemessen lief "Eintragen" in einer
+   316px breiten Zeile von 212 bis 412, also 47px ueber die Karte hinaus und
+   bis 2px vor den Bildschirmrand. Diese 47px reichte `.nut-card` an
+   `#nutritionBody` weiter und waren der Grund, warum sich der Rechner
+   seitlich schieben liess. In der Zeile zaehlt die Spaltenbreite.
+
+   `padding: 14px` als Hoehenquelle — der Knopf wurde damit 42px hoch, das
+   Feld daneben nur 36px. Unten waren beide buendig, oben stand der Knopf 6px
+   darueber. Eine gesetzte Hoehe loest das NICHT: am iPhone ist das Feld 36px
+   hoch, in Playwright-WebKit 35 — je nach Schriftrendering. Deshalb steht der
+   Knopf in einer Spalte mit demselben Aufbau wie das Feld und waechst per
+   `flex: 1` in den Platz unter der Beschriftung. Er erbt die Hoehe, statt sie
+   zu raten. Der Flexkasten zentriert die Beschriftung darin — mit dem alten
+   padding sass "Eintragen" 15px unter der Ober- und 7px ueber der
+   Unterkante, also 8px zu tief. */
+.nut-row .secondary-btn {
+  width: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+}
+
+/* Die Spalte des Knopfes. Ihre Beschriftung ist leer und traegt nur dazu bei,
+   dass beide Spalten dieselbe Hoehe und denselben Aufbau haben. */
+.nut-knopfspalte {
+  min-width: 0;
+}
+
+.nut-knopfspalte > label::after {
+  content: "\00a0";
+}
+
+/* Nur vertikal. Das seitliche Nachfedern kam zwar von dem Knopf oben und ist
+   damit an der Wurzel behoben — aber ein einzelnes zu breites Kind reicht,
+   damit es wiederkommt, und am Geraet faellt es sofort unangenehm auf.
+   Bewusst NICHT `overflow-x: hidden`: das wuerde einen kuenftigen Ueberlauf
+   stillschweigend abschneiden, statt ihn zu zeigen. Dafuer gibt es einen
+   Test, der auf zu breite Elemente anschlaegt. */
+#nutritionBody { overscroll-behavior-x: none; }
+
+/* Auswahl in einer Zeile — Geschlecht, Weg zum Koerperfettanteil, Ziel.
+   Bewusst Knoepfe statt eines Auswahlfelds: drei Moeglichkeiten, die man
+   alle gleichzeitig sehen soll, und ein Fingertipp statt zweier. */
+.nut-choice {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nut-choice button {
+  flex: 1 1 0;
+  min-width: 90px;
+  padding: 10px 8px;
+  border: 1px solid #dde2ea;
+  border-radius: 10px;
+  background: #f7f9fc;
+  color: #042c4c;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.nut-choice button[aria-pressed="true"] {
+  background: #042c4c;
+  border-color: #042c4c;
+  color: #fff;
+}
+
+/* Die Bilderleiter. Drei Spalten wie in der Vorlage; auf schmalen Geraeten
+   bleibt es bei dreien, weil die Reihenfolge sonst zerfaellt. */
+.nut-kfa-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.nut-kfa-grid button {
+  padding: 6px 4px 8px;
+  border: 1px solid #dde2ea;
+  border-radius: 12px;
+  background: #f7f9fc;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.nut-kfa-grid button[aria-pressed="true"] {
+  border-color: #042c4c;
+  background: #eaf1f8;
+  box-shadow: inset 0 0 0 1px #042c4c;
+}
+
+.nut-kfa-grid img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.nut-kfa-grid span {
+  font-size: 12px;
+  font-weight: 800;
+  color: #042c4c;
+}
+
+/* Eine Zeile der Aktivitaetenliste. Abgesetzt, damit bei mehreren Zeilen
+   erkennbar bleibt, was zusammengehoert. */
+.nut-aktivitaet {
+  border: 1px solid #e6e9ee;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #fbfcfe;
+}
+
+.nut-aktivitaet select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #042c4c;
+  font: inherit;
+  font-size: 15px;
+  width: 100%;
+}
+
+.nut-aktivitaet .nut-row { margin-top: 8px; }
+
+.nut-weg {
+  margin-top: 8px;
+  border: none;
+  background: none;
+  color: rgba(4, 44, 76, .6);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  padding: 2px 0;
+  cursor: pointer;
+}
+
+.nut-hinweis {
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(4, 44, 76, .72);
+  margin-top: 8px;
+}
+
+/* Ergebnis */
+.nut-ziel {
+  text-align: center;
+  padding: 4px 0 10px;
+}
+
+.nut-ziel-wert {
+  font-size: 40px;
+  font-weight: 800;
+  color: #042c4c;
+  line-height: 1.1;
+}
+
+.nut-ziel-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(4, 44, 76, .6);
+}
+
+/* Die Aufteilung des Umsatzes als ein Balken. Ein Balken statt vier Zahlen,
+   weil hier das VERHAELTNIS die Aussage ist: wer sieht, dass sein Training
+   nur ein Sechstel ausmacht, versteht, warum eine Einheit mehr das Essen
+   nicht umwirft. */
+.nut-balken {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 10px 0 8px;
+  background: #eef2f7;
+}
+
+.nut-balken > span { display: block; height: 100%; }
+.nut-balken .nut-gu { background: #042c4c; }
+.nut-balken .nut-neat { background: #2f6f9f; }
+.nut-balken .nut-training { background: #4fa3d1; }
+.nut-balken .nut-tef { background: #a9cde4; }
+
+.nut-legende {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px 12px;
+  font-size: 13px;
+  color: #042c4c;
+}
+
+.nut-legende div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nut-legende i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+}
+
+.nut-legende b { margin-left: auto; font-variant-numeric: tabular-nums; }
+
+.nut-makros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.nut-makro {
+  background: #f7f9fc;
+  border: 1px solid #e6e9ee;
+  border-radius: 10px;
+  padding: 10px 4px;
+  text-align: center;
+}
+
+.nut-makro-wert {
+  font-size: 20px;
+  font-weight: 800;
+  color: #042c4c;
+  line-height: 1.15;
+}
+
+.nut-makro-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(4, 44, 76, .6);
+  /* Drei Kacheln nebeneinander, und "Kohlenhydrate" ist das laengste Wort
+     der App ohne Trennmoeglichkeit. Auf Benjamins 414px breitem iPhone passt
+     es; im Test mit schmalerem Fenster stand es 8px ueber der Kachel. Auf
+     einem 375er oder 320er Geraet waere das sichtbar gewesen. `lang="de"`
+     steht am html-Element, damit trennt WebKit an der richtigen Stelle. */
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* Hinweise. Sie sind kein Kleingedrucktes: jeder einzelne benennt eine
+   Schaetzung, die im Ergebnis steckt. */
+.nut-notizen {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nut-notizen li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(4, 44, 76, .82);
+}
+
+.nut-notizen li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4fa3d1;
+}
+
+/* Herkunft der Zeichnungen. Leiser als ein Hinweis, aber sichtbar: es soll
+   niemand fuer Fotos halten, was ein Bildmodell gezeichnet hat. */
+.nut-quelle {
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(4, 44, 76, .5);
+  margin-top: 6px;
+}
+
+.nut-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 14px;
+  color: #042c4c;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.nut-check input { margin-top: 2px; flex: 0 0 auto; }
+
+.nut-gefunden {
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(4, 44, 76, .82);
+  background: #f2f7fb;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Der Gewichtsverlauf als Bild. Das SVG hat `preserveAspectRatio="none"` und
+   fuellt die Kartenbreite — die Zeitachse darf sich strecken, die Werteachse
+   ist ueber die Mindestspanne im Rechenkern gesichert. */
+/* Zeichenflaeche und Achsenbeschriftung liegen NEBENEINANDER, nicht
+   uebereinander. Zuerst sass die Beschriftung absolut oben und unten rechts
+   in der Flaeche — und der letzte Messpunkt lief genau darunter, weil der
+   juengste Wert immer ganz rechts steht und bei einer Abnahme zugleich der
+   niedrigste ist. Eine eigene Spalte kann sich nicht ueberlagern. */
+.nut-graph {
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f7f9fc;
+  border: 1px solid #e6e9ee;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+/* Zeichenflaeche und Zeitachse gehoeren zusammen in eine Spalte: die Daten
+   muessen an denselben Kanten stehen wie der erste und letzte Messpunkt.
+   Die Kilogramm-Achse daneben bleibt auf Hoehe der Flaeche. */
+.nut-graph-spalte {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Die Zeichenflaeche traegt das gestreckte SVG UND die ungestreckten Punkte.
+   `position: relative` ist der Bezug fuer deren Prozentangaben. */
+.nut-graph-flaeche {
+  position: relative;
+  height: 90px;
+}
+
+.nut-graph-zeit {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(4, 44, 76, .45);
+}
+
+.nut-graph-flaeche svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.nut-graph-linie {
+  fill: none;
+  /* Die Verlaufslinie traegt die Markenfarbe (Benjamins Wunsch 26.08.2026).
+     Die Trendgerade darunter ist seitdem navy — zwei orange Linien im selben
+     Bild waeren nicht mehr auseinanderzuhalten. */
+  stroke: #f9803c;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+/* Die Ausgleichsgerade ist die Aussage, die Messpunkte sind das Material —
+   deshalb ist sie die einzige kraeftige Farbe im Bild. */
+.nut-graph-trend {
+  stroke: rgba(4, 44, 76, .45);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 4 3;
+}
+
+/* Feste Groesse in Bildpunkten statt eines SVG-Radius: so bleibt der Punkt
+   rund, egal wie breit die Karte gerade ist. */
+.nut-graph-punkt {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #042c4c;
+  transform: translate(-50%, -50%);
+}
+
+.nut-graph-achse {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  height: 90px;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(4, 44, 76, .45);
+  pointer-events: none;
+}
+
+/* Erklaerung hinter einem Fragezeichen. `list-style: none` plus der
+   WebKit-Marker: ohne beides zeichnet Safari zusaetzlich sein eigenes
+   Dreieck neben den Kreis. */
+.nut-hilfe {
+  margin-top: 8px;
+}
+
+.nut-hilfe > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #d7dee6;
+  background: #f2f7fb;
+  color: rgba(4, 44, 76, .7);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.nut-hilfe > summary::-webkit-details-marker { display: none; }
+.nut-hilfe > summary::marker { content: ""; }
+.nut-hilfe[open] > summary { background: #e3edf6; border-color: #c3d2e0; }
+.nut-hilfe .nut-hinweis { margin-top: 6px; }
+
+/* Das Fragezeichen gehoert NEBEN die Beschriftung, nicht darunter. Sonst
+   steht es als eigene Zeile im Formular und sieht aus wie ein Bedienelement
+   fuer das ganze Feld. Der aufgeklappte Text laeuft trotzdem unter das Feld:
+   nur die Marke wandert nach oben rechts, das <details> selbst bleibt, wo es
+   steht. */
+.nut-mit-hilfe {
+  position: relative;
+}
+
+.nut-mit-hilfe > .nut-hilfe {
+  margin-top: 0;
+}
+
+.nut-mit-hilfe > .nut-hilfe > summary {
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+}
+
+/* Beschriftung ueber dem Haken, in derselben Form wie ein Feldtitel
+   (.profile-field label: 13px, 700). Ohne sie stuende der Haken ohne
+   Ueberschrift neben einem Feld, das eine hat. */
+.nut-feld-titel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #042c4c;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+/* Waagerechte Hilfslinien im Gewichtsverlauf (26.08.2026). Dezent genug, um
+   die Kurve nicht zu stoeren, aber sichtbar genug, um an ihnen abzulesen. */
+.nut-graph-raster {
+  stroke: rgba(4, 44, 76, .13);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
