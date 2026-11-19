@@ -52,71 +52,83 @@
      Ruheumsatz, 8 MET also der achtfache. Die Auswahl und die Beschriftungen
      sind unsere: sie decken ab, was TrainLogic-Nutzer neben ihrem Training
      tatsaechlich machen. */
+  /* Seit Pruefrunde 3 (15.11.2026) verweisen die Zeilen auf js/aktivitaet-katalog.js
+     (k: [Katalog-id, Stufe]) — vorher fuehrte der Rechner eigene Werte, die
+     vom Blatt "Sport eintragen" abwichen (Rudern 150 W: 8,5 hier, 11 dort).
+     Wo der Katalog keine passende Stufe hat, steht der Wert mit
+     Compendium-Code direkt da. Rudern rechnet aus der Leistung (watt +
+     formel, nutrition-calc.js kcalAusLeistung). NAMEN NICHT AENDERN: aus
+     ihnen entstehen die gemerkten Schluessel (artSchluessel). */
+  const KAT = window.AktivitaetKatalog;
+  const z = (name, k) => { const st = KAT.stufe(k[0], k[1]); return { met: st.met, code: st.code, name }; };
+  const zm = (name, met, code) => ({ met, code, name });
+  const zw = (name, k, watt) => Object.assign(z(name, k), { watt, formel: "rudern" });
   const AKTIVITAETEN = [
     { gruppe: "Kraft und Fitness", eintraege: [
-      { met: 3.5, name: "Krafttraining, locker" },
-      { met: 5.0, name: "Krafttraining, zügig" },
-      { met: 6.0, name: "Krafttraining, schwer" },
-      { met: 8.0, name: "Zirkeltraining / Metcon" },
-      { met: 11.8, name: "Seilspringen" },
-      { met: 2.5, name: "Yoga" },
-      { met: 3.0, name: "Pilates / Mobility" }
+      zm("Krafttraining, locker", 3.5, "02054"),
+      zm("Krafttraining, zügig", 5.0, "02052"),
+      zm("Krafttraining, schwer", 6.0, "02050"),
+      z("Zirkeltraining / Metcon", ["zirkel", 2]),
+      z("Seilspringen", ["seil", 0]),
+      z("Yoga", ["yoga", 0]),
+      z("Pilates / Mobility", ["pilates", 0])
     ]},
     { gruppe: "Laufen", eintraege: [
-      { met: 8.3, name: "Laufen, 8 km/h" },
-      { met: 9.8, name: "Laufen, 10 km/h" },
-      { met: 11.0, name: "Laufen, 11 km/h" },
-      { met: 11.8, name: "Laufen, 13 km/h" },
-      { met: 12.8, name: "Laufen, 14,5 km/h" },
-      { met: 14.5, name: "Laufen, 16 km/h" },
-      { met: 6.0, name: "Wandern" },
-      { met: 7.8, name: "Wandern mit Gepäck" }
+      z("Laufen, 8 km/h", ["laufen", 1]),
+      z("Laufen, 10 km/h", ["laufen", 2]),
+      z("Laufen, 11 km/h", ["laufen", 3]),
+      z("Laufen, 13 km/h", ["laufen", 5]),
+      z("Laufen, 14,5 km/h", ["laufen", 6]),
+      z("Laufen, 16 km/h", ["laufen", 7]),
+      z("Wandern", ["wandern", 2]),
+      z("Wandern mit Gepäck", ["wandern", 3])
     ]},
     { gruppe: "Rad und Ergometer", eintraege: [
-      { met: 6.8, name: "Radfahren, 16-19 km/h" },
-      { met: 8.0, name: "Radfahren, 19-22 km/h" },
-      { met: 10.0, name: "Radfahren, 22-25 km/h" },
-      { met: 12.0, name: "Rennrad, 25-30 km/h" },
-      { met: 15.8, name: "Rennrad, über 32 km/h" },
-      { met: 4.8, name: "Rudern, locker (50 W)" },
-      { met: 7.0, name: "Rudern, moderat (100 W)" },
-      { met: 8.5, name: "Rudern, anstrengend (150 W)" },
-      { met: 12.0, name: "Rudern, hart (200 W)" }
+      z("Radfahren, 16-19 km/h", ["rad", 0]),
+      z("Radfahren, 19-22 km/h", ["rad", 1]),
+      z("Radfahren, 22-25 km/h", ["rad", 2]),
+      z("Rennrad, 25-30 km/h", ["rad", 3]),
+      zm("Rennrad, über 32 km/h", 16.8, "01060"),
+      zw("Rudern, locker (50 W)", ["rudern", 0], 50),
+      zw("Rudern, moderat (100 W)", ["rudern", 1], 100),
+      zw("Rudern, anstrengend (150 W)", ["rudern", 2], 150),
+      zw("Rudern, hart (200 W)", ["rudern", 3], 200)
     ]},
     { gruppe: "Wasser", eintraege: [
-      { met: 5.8, name: "Schwimmen, locker" },
-      { met: 8.3, name: "Schwimmen, zügig" },
-      { met: 10.0, name: "Kraul, schnell" }
+      z("Schwimmen, locker", ["schwimmen", 1]),
+      z("Schwimmen, zügig", ["schwimmen", 2]),
+      z("Kraul, schnell", ["schwimmen", 3])
     ]},
     { gruppe: "Ballsport", eintraege: [
-      { met: 7.0, name: "Fußball, Freizeit" },
-      { met: 10.0, name: "Fußball, Wettkampf" },
-      { met: 8.0, name: "Handball, Freizeit" },
-      { met: 12.0, name: "Handball, Wettkampf" },
-      { met: 6.5, name: "Basketball, locker" },
-      { met: 8.0, name: "Basketball, Wettkampf" },
-      { met: 7.3, name: "Tennis, Einzel" },
-      { met: 6.0, name: "Tennis, Doppel" },
-      { met: 7.3, name: "Squash" },
-      { met: 5.5, name: "Badminton" },
-      { met: 4.0, name: "Volleyball" }
+      z("Fußball, Freizeit", ["fussball", 0]),
+      z("Fußball, Wettkampf", ["fussball", 1]),
+      zm("Handball, Freizeit", 8.0, "15330"),
+      // Kein eigener Wettkampfwert im Compendium; wie Fussball Wettkampf.
+      zm("Handball, Wettkampf", 9.5, "15330"),
+      z("Basketball, locker", ["basketball", 0]),
+      z("Basketball, Wettkampf", ["basketball", 2]),
+      z("Tennis, Einzel", ["tennis", 1]),
+      z("Tennis, Doppel", ["tennis", 0]),
+      z("Squash", ["squash", 0]),
+      z("Badminton", ["badminton", 0]),
+      z("Volleyball", ["volleyball", 0])
     ]},
     { gruppe: "Kampfsport", eintraege: [
-      { met: 5.5, name: "Boxen, Sandsack" },
-      { met: 7.8, name: "Boxen, Sparring" },
-      { met: 12.8, name: "Boxen, Wettkampf" },
-      { met: 10.3, name: "Judo / Karate / Kickboxen" },
-      { met: 6.0, name: "Ringen / Grappling" }
+      z("Boxen, Sandsack", ["boxsack", 0]),
+      zm("Boxen, Sparring", 7.8, "15120"),
+      zm("Boxen, Wettkampf", 12.8, "15110"),
+      z("Judo / Karate / Kickboxen", ["kampfsport", 1]),
+      zm("Ringen / Grappling", 6.0, "15730")
     ]},
     { gruppe: "Draußen und Sonstiges", eintraege: [
-      { met: 5.8, name: "Bouldern" },
-      { met: 7.5, name: "Klettern am Fels" },
-      { met: 7.0, name: "Skifahren" },
-      { met: 9.0, name: "Skilanglauf" },
-      { met: 5.5, name: "Reiten" },
-      { met: 5.0, name: "Tanzen" },
-      { met: 4.8, name: "Golf, zu Fuß" },
-      { met: 4.3, name: "Zügig gehen" }
+      z("Bouldern", ["klettern", 0]),
+      z("Klettern am Fels", ["klettern", 2]),
+      z("Skifahren", ["ski", 1]),
+      z("Skilanglauf", ["langlauf", 1]),
+      z("Reiten", ["reiten", 0]),
+      z("Tanzen", ["tanzen", 1]),
+      z("Golf, zu Fuß", ["golf", 0]),
+      z("Zügig gehen", ["spazieren", 3])
     ]}
   ];
 
@@ -178,6 +190,7 @@
     return {
       art: treffer ? treffer.art : "",
       met: treffer ? treffer.met : "",
+      ...(treffer && treffer.watt ? { watt: treffer.watt, formel: treffer.formel } : {}),
       minuten: a.minuten === undefined || a.minuten === null ? "" : a.minuten,
       proWoche: a.proWoche === undefined || a.proWoche === null ? "1" : a.proWoche
     };
@@ -216,6 +229,16 @@
   const WEB = !!window.NutritionToolWeb;
 
   const SPEICHER = "tl_nutrition_eingaben";
+  /* Die Angaben, mit denen der Kalorienzaehler (js/ernaehrung.js) seine
+     Tagesbilanz rechnet — getrennt von SPEICHER, der jede Eingabe im Rechner
+     sofort mitschreibt. Benjamin 14.11.2026: "Wenn jemand den Kalorienrechner
+     neu ausfuellt, soll er gefragt werden, ob die neuen Daten fuer die Bilanz
+     uebernommen werden sollen." Also darf man im Rechner herumprobieren, ohne
+     dass sich die Bilanz still mitaendert. { werte: {...}, stand: "JJJJ-MM-TT" } */
+  const BILANZ = "tl_nutrition_bilanz";
+  const BILANZ_FELDER = ["geschlecht", "gewichtKg", "groesseCm", "alterJahre", "trainingLevel",
+    "kfaWeg", "kfaBild", "kfaEingabe", "halsCm", "bauchCm", "tailleCm", "huefteCm",
+    "schritte", "unruhig", "trainingWeg", "aktivitaeten", "ziel"];
   const VERLAUF = "tl_gewicht_verlauf";
 
   let zustand = null;
@@ -273,6 +296,177 @@
      haette damit nicht nur einen falschen Tag bekommen, sondern die Wiegung
      des Vortages UEBERSCHRIEBEN: es gilt ein Eintrag je Tag, der letzte
      gewinnt. Aufgefallen, weil waehrend eines Testlaufs Mitternacht war. */
+  /* --- Uebernommene Anpassung aus dem Gewichtsverlauf (18.11.2026) ----------
+     Benjamin: "die beste App in diesem Bereich". Der Abgleich mit der Waage
+     (verlaufAuswerten) riet bisher nur — "nimm rund 120 kcal weniger" — und
+     das Ziel blieb, wie es war. Jetzt laesst sich der Rat uebernehmen:
+     { kcal: Summe aller Schritte, seit: Tag des letzten Schritts }.
+     Die Summe ist auf 500 kcal begrenzt (mehr als das ist kein Formelfehler
+     mehr, sondern falsches Eintragen). Nach einem Schritt zaehlen nur noch
+     Wiegungen ab diesem Tag (datenAb), der naechste Rat kommt also
+     fruehestens nach drei Wochen. Nur auf dem Geraet. */
+  const KORREKTUR = "tl_bedarf_korrektur_v1";
+  const KORREKTUR_MAX = 500;
+  function korrekturGemerkt() {
+    try {
+      const k = JSON.parse(localStorage.getItem(KORREKTUR) || "null");
+      if (k && typeof k === "object" && isFinite(k.kcal)) return { kcal: Math.max(-KORREKTUR_MAX, Math.min(KORREKTUR_MAX, Math.round(Number(k.kcal)))), seit: typeof k.seit === "string" ? k.seit : null };
+    } catch (err) { /* kaputt: keine Anpassung */ }
+    return { kcal: 0, seit: null };
+  }
+  function korrekturUebernehmen(kcal) {
+    const alt = korrekturGemerkt();
+    const neu = Math.max(-KORREKTUR_MAX, Math.min(KORREKTUR_MAX, alt.kcal + Math.round(Number(kcal) || 0)));
+    try { localStorage.setItem(KORREKTUR, JSON.stringify({ kcal: neu, seit: heutigerTag() })); } catch (err) { /* voll */ }
+    return neu;
+  }
+  function korrekturZuruecknehmen() {
+    try { localStorage.removeItem(KORREKTUR); } catch (err) { /* egal */ }
+  }
+  /* --- Bedarf je Tag einfrieren (Benjamin 18.11.2026 "ja") -------------------
+     Woche und Monat rechneten vergangene Tage mit den Angaben von HEUTE:
+     nach einer neuen Wiegung oder einem Zielwechsel hiess es fuer dieselben
+     Tage "0 von 6 im Zielbereich" statt "5 von 6" (Pruefung 18.11.2026).
+     Gemerkt wird nicht jeder Tag, sondern jede AENDERUNG: eine Liste von
+     { ab: Tag, werte: Angaben der Bilanz, korr: uebernommene Anpassung }.
+     Fuer einen vergangenen Tag gilt der letzte Eintrag mit ab <= Tag; Tage
+     vor dem ersten Eintrag nehmen den ersten (aelter weiss es niemand).
+     Der Sport des Tages kommt weiter frisch aus den Logs. Nur auf dem Geraet. */
+  const BEDARF_VERLAUF = "tl_bedarf_verlauf_v1";
+  const BEDARF_VERLAUF_MAX = 120;
+  function bedarfVerlauf() {
+    try { const l = JSON.parse(localStorage.getItem(BEDARF_VERLAUF) || "[]"); return Array.isArray(l) ? l.filter((x) => x && typeof x.ab === "string" && x.werte) : []; }
+    catch (err) { return []; }
+  }
+  // Haelt den Stand von heute fest, wenn er sich vom letzten Eintrag unterscheidet.
+  function bedarfVerlaufFortschreiben(werte, korr) {
+    const heute = heutigerTag();
+    const l = bedarfVerlauf();
+    const letzter = l[l.length - 1];
+    if (letzter && bilanzGleich(letzter.werte, werte) && Number(letzter.korr || 0) === Number(korr || 0)) return;
+    const neu = { ab: heute, werte: JSON.parse(JSON.stringify(werte)), korr: Number(korr || 0) };
+    if (letzter && letzter.ab === heute) l[l.length - 1] = neu; else l.push(neu);
+    try { localStorage.setItem(BEDARF_VERLAUF, JSON.stringify(l.slice(-BEDARF_VERLAUF_MAX))); } catch (err) { /* voll: dann eben ohne */ }
+  }
+  function bedarfAmTag(tag) {
+    const l = bedarfVerlauf();
+    if (!l.length) return null;
+    let treffer = l[0];
+    for (const x of l) { if (x.ab <= tag) treffer = x; else break; }
+    return treffer;
+  }
+
+  /* Der Abgleich mit der Waage fuer ein Rechenergebnis r — eine Stelle fuer
+     den Rechner ("Wie es wirklich laeuft") und den Kalorienzaehler. Das Ziel
+     ist das GELTENDE, also mit der uebernommenen Anpassung. */
+  function verlaufStandFuer(r) {
+    let aufnahme = [];
+    try { if (!WEB && window.TrainLogicErnaehrung?.freigegeben?.()) aufnahme = window.TrainLogicErnaehrung.aufnahmeTage?.() || []; } catch (err) { /* ohne Zaehler */ }
+    const gemerkt = WEB ? null : bilanzGemerkt();
+    const k = WEB ? { kcal: 0, seit: null } : korrekturGemerkt();
+    const stand = window.NutritionCalc.verlaufAuswerten(verlauf(), {
+      ziel: r.ziel, zielRateProWoche: r.rateProWoche, gewichtKg: zustand.gewichtKg,
+      zielSeit: gemerkt && gemerkt.werte && gemerkt.werte.ziel === r.ziel ? gemerkt.zielSeit : null,
+      datenAb: k.seit,
+      aufnahme, zielKcal: r.zielKcal + k.kcal, abweichungKcal: r.abweichungKcal
+    });
+    // Mehr als die Grenze laesst sich nicht uebernehmen: den Rat darauf stutzen.
+    if (stand.deutlich) {
+      const moeglich = Math.max(-KORREKTUR_MAX, Math.min(KORREKTUR_MAX, k.kcal + stand.korrekturKcal)) - k.kcal;
+      if (moeglich === 0) stand.deutlich = false;
+      stand.korrekturKcal = moeglich;
+    }
+    stand.uebernommenKcal = k.kcal;
+    stand.uebernommenSeit = k.seit;
+    stand.zielKcal = r.zielKcal + k.kcal;
+    return stand;
+  }
+  /* Fuer den Kalorienzaehler: derselbe Abgleich mit den uebernommenen
+     Angaben der Bilanz. null, solange der Rechner nicht eingerichtet ist. */
+  function verlaufStand() {
+    const C = window.NutritionCalc;
+    if (!C || WEB) return null;
+    const vorher = zustand;
+    try {
+      zustand = zustandAufbauen();
+      const b = bilanzGemerkt();
+      if (!b) return null;
+      zustand = Object.assign({}, zustand, b.werte);
+      const r = C.berechnen(eingabeBauen());
+      if (!r.vollstaendig) return null;
+      return verlaufStandFuer(r);
+    } catch (err) { return null; } finally { zustand = vorher; }
+  }
+
+  function bilanzWerte(z) {
+    const w = {};
+    for (const f of BILANZ_FELDER) w[f] = z[f] === undefined ? null : JSON.parse(JSON.stringify(z[f]));
+    return w;
+  }
+  function bilanzGemerkt() {
+    try { const b = JSON.parse(localStorage.getItem(BILANZ) || "null"); return b && b.werte ? b : null; }
+    catch (err) { return null; }
+  }
+  /* zielSeit (Pruefrunde 3): seit wann das Ziel gilt. Die ersten 14 Tage
+     danach wertet der Abgleich mit der Waage nicht — Glykogen und Wasser. Bei
+     unveraendertem Ziel bleibt das alte Datum; Altbestand ohne Datum bleibt
+     ohne Sperre. Das ERSTE Uebernehmen ist kein Zielwechsel (15.11.2026,
+     mit der Freigabe fuer alle gefunden): wer schon wochenlang wiegt und den
+     Zaehler zum ersten Mal einrichtet, sah die Rueckmeldung der Waage sonst
+     14 Tage lang nicht mehr. */
+  function bilanzMerken(werte) {
+    const alt = bilanzGemerkt();
+    const zielSeit = !alt ? null : alt.werte && alt.werte.ziel === werte.ziel ? (alt.zielSeit || null) : heutigerTag();
+    try { localStorage.setItem(BILANZ, JSON.stringify({ werte, stand: heutigerTag(), zielSeit })); }
+    catch (err) { /* voller Speicher: die Bilanz bleibt beim alten Stand */ }
+  }
+  // "83" und 83 sind dieselbe Angabe; Felder tippen Text, Knoepfe setzen Zahlen.
+  function bilanzGleich(a, b) {
+    const norm = (w) => JSON.stringify(w, (k, v) => (typeof v === "number" ? String(v) : v));
+    return norm(a) === norm(b);
+  }
+  /* Rechnet mit fremden Angaben, ohne den Zustand des Formulars anzufassen. */
+  function mitWerten(werte, fn) {
+    const vorher = zustand;
+    try { zustand = Object.assign({}, zustand, werte); return fn(); }
+    finally { zustand = vorher; }
+  }
+
+  /* Nach "Berechnen": gilt das fuer die Bilanz? Nur wenn der Kalorienzaehler
+     fuer dieses Konto freigeschaltet ist — sonst gibt es keine Bilanz. Beim
+     ersten Mal wird ohne Frage uebernommen (das IST die Einrichtung). */
+  function bilanzFrage(r) {
+    if (WEB || !r.vollstaendig || !window.TrainLogicErnaehrung?.freigegeben?.()) return "";
+    const neu = bilanzWerte(zustand);
+    const alt = bilanzGemerkt();
+    if (!alt) {
+      bilanzMerken(neu);
+      window.TrainLogicErnaehrung.profilKarteAktualisieren?.();
+      return `<div class="nut-card nut-bilanz" id="nutBilanz"><div class="nut-hinweis"><b>Für deine Tagesbilanz übernommen.</b> Im Profil siehst du jetzt jeden Tag, was noch frei ist.</div></div>`;
+    }
+    if (bilanzGleich(alt.werte, neu)) return "";
+    const altZiel = mitWerten(alt.werte, () => window.NutritionCalc.berechnen(eingabeBauen()));
+    const vergleich = altZiel.vollstaendig && altZiel.zielKcal !== r.zielKcal
+      ? ` Bisher rechnet sie mit <b>${altZiel.zielKcal} kcal</b>, neu wären es <b>${r.zielKcal} kcal</b> (bei durchschnittlichem Training).`
+      : "";
+    return `<div class="nut-card nut-bilanz" id="nutBilanz">
+      <div class="nut-card-title">Für die Tagesbilanz übernehmen?</div>
+      <div class="nut-hinweis">Deine Bilanz im Profil nutzt noch die Angaben vom <b>${kurzesDatum(alt.stand)}</b>.${vergleich}</div>
+      <div class="nut-bilanz-knoepfe">
+        <button type="button" class="secondary-btn" id="nutBilanzNein">Alte behalten</button>
+        <button type="button" class="primary-btn" id="nutBilanzJa">Übernehmen</button>
+      </div></div>`;
+  }
+
+  function bilanzGewicht(kg) {
+    if (WEB || !window.TrainLogicErnaehrung?.freigegeben?.()) return;
+    const b = bilanzGemerkt();
+    if (!b) return;
+    b.werte.gewichtKg = kg;
+    try { localStorage.setItem(BILANZ, JSON.stringify(b)); } catch (err) { /* bleibt beim alten Stand */ }
+    window.TrainLogicErnaehrung.profilKarteAktualisieren?.();
+  }
+
   function heutigerTag() {
     const d = new Date();
     const zwei = (n) => String(n).padStart(2, "0");
@@ -330,7 +524,9 @@
       gewichtKg: ausWiegung ? ausWiegung.kg : (Number(p.weightKg || p.weight || 0) || ""),
       gewichtVonWiegung: ausWiegung ? ausWiegung.datum : "",
       groesseCm: Number(p.heightCm || p.height || 0) || "",
-      alterJahre: Number(p.age || p.ageYears || 0) || "",
+      // Ein Geburtstag schlaegt das gespeicherte Alter (js/geburtstag.js).
+      alterJahre: (window.TLGeburtstag ? window.TLGeburtstag.alterAusProfil(p) : Number(p.age || p.ageYears || 0)) || "",
+      geburtstag: WEB ? "" : (p.geburtstag || ""),
       trainingLevel: p.trainingLevel || "regular",
 
       kfaWeg: alt.kfaWeg || "bild",
@@ -634,8 +830,10 @@
       text = `<b>1 Wiegung</b>, zuletzt ${String(letzter.kg).replace(".", ",")} kg. ` +
         "Noch eine, dann zeichnen wir deinen Verlauf.";
     } else if (!stand.belastbar) {
+      // Pruefrunde 3: erst ab 8 Wiegungen ueber 3 Wochen — vorher misst die
+      // Gerade vor allem die Tagesschwankung.
       text = `<b>${liste.length} Wiegungen</b>, zuletzt ${String(letzter.kg).replace(".", ",")} kg. ` +
-        "Ab drei Wiegungen über zwei Wochen vergleichen wir die Vorgabe mit deiner Waage.";
+        "Ab 8 Wiegungen über drei Wochen vergleichen wir die Vorgabe mit deiner Waage – am besten morgens, nüchtern.";
     } else {
       const richtung = stand.istProWoche < 0 ? "ab" : stand.istProWoche > 0 ? "zu" : "gleich";
       text = `<b>${stand.punkte}</b> Wiegungen über ${stand.tage} Tage, zuletzt ${String(stand.gewichtJetzt).replace(".", ",")} kg. ` +
@@ -660,6 +858,7 @@
       ziel: zustand.ziel,
       kfaProzent: kfa.prozent,
       kfaBelastbar: kfa.belastbar,
+      kfaQuelle: kfa.quelle,
       trainingLevel: zustand.trainingLevel
     });
 
@@ -684,7 +883,53 @@
       `<div class="nut-hinweis">${worauf}</div>`;
   }
 
+  /* Abgleich mit dem Profil (14.11.2026, Benjamin): "Daten, die dort
+     eingegeben werden, sollen auch im Profil landen und andersherum auch" —
+     der Nutzer gibt Geschlecht, Gewicht, Groesse und Geburtstag nur einmal
+     an. Gelesen wurde schon immer aus dem Profil; neu ist das Zurueck-
+     schreiben. Nur in der App (die Webseite hat kein Profil) und bis zur
+     Freigabe nur fuer Admin, zusammen mit dem Geburtstag. */
+  function abgleich() {
+    return !WEB && !!(window.TLGeburtstag && window.TLGeburtstag.aktiv());
+  }
+
+  function geburtstagFeld() {
+    const G = window.TLGeburtstag;
+    const text = zustand.geburtstag ? G.anzeigen(zustand.geburtstag) : "Eintragen";
+    return `<div class="profile-field"><label for="nutGeburtstag">Geburtstag</label>` +
+      // Schreibgeschuetztes Feld statt Knopf: sieht aus wie die Felder daneben.
+      `<input type="text" readonly inputmode="none" id="nutGeburtstag" class="geb-feldknopf${zustand.geburtstag ? "" : " geb-leer"}" value="${esc(text)}"></div>`;
+  }
+
+  /* Schreibt einen Koerperwert ins Profil, ueber denselben Weg wie die
+     Felder der Einstellungen (Cloud, Kraft-Score, "profileUpdated"). */
+  function insProfil(feldName, wert) {
+    if (!abgleich() || typeof window.updateSingleProfileField !== "function") return;
+    const zahlWert = (v) => { const n = Number(String(v).replace(",", ".")); return n > 0 ? n : null; };
+    if (feldName === "geschlecht") window.updateSingleProfileField("gender", wert === "frau" ? "female" : "male");
+    else if (feldName === "gewichtKg") { const n = zahlWert(wert); if (n) window.updateSingleProfileField("weight", n); }
+    else if (feldName === "groesseCm") { const n = zahlWert(wert); if (n) window.updateSingleProfileField("height", n); }
+    else if (feldName === "alterJahre") { const n = zahlWert(wert); if (n) window.updateSingleProfileField("age", Math.round(n)); }
+  }
+
+  /* Nur der Gewichtsverlauf, geoeffnet ueber "Koerpergewicht eintragen" im
+     Kalorienzaehler (Benjamin 14.11.2026). Dasselbe Overlay und dieselben
+     Bausteine wie im Rechner — nur ohne den Rest des Formulars. */
+  let nurGewicht = false;
+  function gewichtBlattBauen() {
+    return `<div class="nut-card">
+        <div class="nut-mit-hilfe">
+          <div class="nut-card-title">Gewichtsverlauf</div>
+          ${hilfe("verlauf", "Dein Gewicht schwankt jeden Tag um bis zu einem Kilo — Wasser, Essen, Salz. Ab <b>8 Wiegungen über drei Wochen</b> legen wir eine Linie durch alle Punkte, und die zeigt, wohin es wirklich geht. Wieg dich am besten immer zur selben Zeit: morgens, nüchtern, nach dem Klo.")}
+        </div>
+        ${verlaufBereich()}
+        ${abgleich() ? `<div class="nut-hinweis">Deine Wiegung gilt sofort für deine Tagesbilanz und dein Profil.</div>` : ""}
+      </div>
+      <button id="nutGewichtFertig" class="primary-btn overlay-full-btn" type="button">Fertig</button>`;
+  }
+
   function formularBauen() {
+    if (nurGewicht) return gewichtBlattBauen();
     return `
       <div class="nut-card">
         <div class="nut-card-title">Körperdaten</div>
@@ -692,7 +937,7 @@
         <div class="nut-row" style="margin-top:10px">
           ${feld("gewichtKg", "Gewicht (kg)", zustand.gewichtKg)}
           ${feld("groesseCm", "Größe (cm)", zustand.groesseCm)}
-          ${feld("alterJahre", "Alter", zustand.alterJahre)}
+          ${abgleich() ? geburtstagFeld() : feld("alterJahre", "Alter", zustand.alterJahre)}
         </div>
         <div class="nut-hinweis">${WEB
           ? (zustand.gewichtVonWiegung
@@ -700,7 +945,9 @@
             : "") + "Deine Angaben bleiben in deinem Browser, wir speichern nichts."
           : (zustand.gewichtVonWiegung
             ? `Gewicht aus deiner Wiegung vom <b>${kurzesDatum(zustand.gewichtVonWiegung)}</b>, der Rest aus deinem Profil.`
-            : "Aus deinem Profil übernommen.") + " Änderungen hier gelten nur für diese Rechnung."}</div>
+            : "Aus deinem Profil übernommen.") + (abgleich()
+              ? " Was du hier änderst, landet auch in deinem Profil."
+              : " Änderungen hier gelten nur für diese Rechnung.")}</div>
       </div>
 
       <div class="nut-card">
@@ -756,7 +1003,7 @@
       </div>` : `<div class="nut-card">
         <div class="nut-mit-hilfe">
           <div class="nut-card-title">Gewichtsverlauf</div>
-          ${hilfe("verlauf", "Dein Gewicht schwankt jeden Tag um bis zu einem Kilo — Wasser, Essen, Salz. Aus zwei Werten lässt sich der echte Trend davon nicht trennen. Ab <b>drei Wiegungen über zwei Wochen</b> legen wir eine Linie durch alle Punkte, und die zeigt, wohin es wirklich geht. Wieg dich dafür am besten immer zur selben Zeit: morgens, nüchtern, nach dem Klo.")}
+          ${hilfe("verlauf", "Dein Gewicht schwankt jeden Tag um bis zu einem Kilo — Wasser, Essen, Salz. Aus zwei Werten lässt sich der echte Trend davon nicht trennen. Ab <b>8 Wiegungen über drei Wochen</b> legen wir eine Linie durch alle Punkte, und die zeigt, wohin es wirklich geht. Wieg dich dafür am besten immer zur selben Zeit: morgens, nüchtern, nach dem Klo.")}
         </div>
         ${verlaufBereich()}
       </div>`}
@@ -801,14 +1048,18 @@
       const aus = window.NutritionCalc.trainingAusLogs(logs(), {});
       // Der Wochenwert wird als EINE Einheit je Woche uebergeben; der Kern
       // teilt selbst auf den Tag.
+      // ruheMinuten: nur die brutto geschaetzten Minuten — gemessene
+      // Netto-Werte (Uhr, Puls %HRR) bekommen keinen Ruheabzug (Pruefrunde 3).
       e.einheiten = aus.kcalProWoche > 0
-        ? [{ kcal: aus.kcalProWoche, minuten: aus.minutenProWoche, proWoche: 1 }]
+        ? [{ kcal: aus.kcalProWoche, minuten: aus.minutenProWoche, ruheMinuten: aus.ruheMinutenProWoche, proWoche: 1 }]
         : [];
     } else {
       // MET-Form: der Kern rechnet MET x kg x Stunden und bekommt die Dauer
       // gleich mit — daraus faellt spaeter der Ruheanteil.
       e.einheiten = zustand.aktivitaeten
         .map((a) => ({
+          // watt/formel immer frisch aus der Liste (wie met), nie aus dem Speicher.
+          ...(() => { const t = aktivitaetZuArt(a.art); return t && t.watt ? { watt: t.watt, formel: t.formel } : {}; })(),
           met: Number(a.met) || 0,
           minuten: Number(String(a.minuten).replace(",", ".")) || 0,
           proWoche: Number(String(a.proWoche).replace(",", ".")) || 1
@@ -820,13 +1071,14 @@
   }
 
   /* Der Abgleich mit der Waage. Er erscheint NUR, wenn die Grundlage traegt —
-     drei Wiegungen ueber vierzehn Tage. Eine Korrektur aus fuenf Tagen waere
-     Rauschen mit Nachkommastelle, und sie stuende hier mit derselben
-     Bestimmtheit wie eine belastbare. */
+     seit Pruefrunde 3 (15.11.2026) 8 Wiegungen ueber 21 Tage, ohne die
+     ersten 14 Tage nach einem Zielwechsel. Geraten wird nur, wenn die
+     Abweichung groesser ist als das Rauschen (2 Standardfehler), und dann
+     die Haelfte, hoechstens 250 kcal. Kennt der Kalorienzaehler genug
+     vollstaendige Tage, rechnet der Kern den Verbrauch aus Aufnahme und
+     Gewichtsverlauf zurueck — dann faellt die Formel ganz heraus. */
   function verlaufKarte(r) {
-    const stand = window.NutritionCalc.verlaufAuswerten(verlauf(), {
-      ziel: r.ziel, zielRateProWoche: r.rateProWoche, gewichtKg: zustand.gewichtKg
-    });
+    const stand = verlaufStandFuer(r);
     if (!stand.belastbar) return "";
 
     const kg = (n) => String(Math.abs(n)).replace(".", ",") + " kg";
@@ -836,20 +1088,20 @@
     const ist = stand.istProWoche === 0 ? "es steht"
       : (stand.istProWoche < 0 ? "du verlierst " + kg(stand.istProWoche) + " pro Woche"
                                : "du legst " + kg(stand.istProWoche) + " pro Woche zu");
-
-    // Unter 60 kcal Unterschied ist die Abweichung kleiner als das
-    // Messrauschen der Waage ueber diesen Zeitraum — dann nichts aendern.
-    const deutlich = Math.abs(stand.korrekturKcal) >= 60;
-    const rat = deutlich
-      ? `Nimm rund <b>${Math.abs(stand.korrekturKcal)} kcal ${stand.korrekturKcal < 0 ? "weniger" : "mehr"}</b> — also etwa ${r.zielKcal + stand.korrekturKcal} statt ${r.zielKcal} kcal.`
-      : "Das liegt im Rahmen. Lass die Vorgabe, wie sie ist.";
+    const rat = stand.deutlich
+      ? `Nimm rund <b>${Math.abs(stand.korrekturKcal)} kcal ${stand.korrekturKcal < 0 ? "weniger" : "mehr"}</b> — also etwa ${stand.zielKcal + stand.korrekturKcal} statt ${stand.zielKcal} kcal.`
+      : "Das liegt im Rahmen dessen, was die Waage von Tag zu Tag schwankt. Lass die Vorgabe, wie sie ist.";
+    const woher = stand.methode === "aufnahme"
+      ? `Aus ${stand.aufnahmeTage} vollständig eingetragenen Tagen und deinem Gewichtsverlauf liegt dein Verbrauch bei rund <b>${stand.verbrauchKcal} kcal</b> am Tag.`
+      : "";
 
     return `
       <div class="nut-card">
         <div class="nut-card-title">Wie es wirklich läuft</div>
         <div class="nut-hinweis" style="margin-top:0">Aus ${stand.punkte} Wiegungen über ${stand.tage} Tage: geplant war, ${soll} — tatsächlich ${ist}.</div>
+        ${woher ? `<div class="nut-hinweis">${woher}</div>` : ""}
         <div class="nut-gefunden" style="margin-top:8px">${rat}</div>
-        <div class="nut-hinweis">Das ist die einzige Zahl hier, die nicht auf einer Formel beruht, sondern auf deiner Waage. Sie schlägt die Schätzung.</div>
+        <div class="nut-hinweis">${stand.deutlich ? "Wir ändern bewusst nur um die Hälfte: die Waage schwankt, und kleine Schritte treffen sicherer. Nach zwei, drei Wochen schaust du wieder hier." : "Wir raten erst zu einer Änderung, wenn die Abweichung größer ist als das Schwanken der Waage."}</div>
       </div>`;
   }
 
@@ -977,7 +1229,7 @@
     // Auch hier: wer die Erklaerung offen hat und neu rechnet, soll sie
     // offen behalten.
     hilfenMerken(ziel);
-    ziel.innerHTML = ergebnisBauen(r);
+    ziel.innerHTML = bilanzFrage(r) + ergebnisBauen(r);
     ziel.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -1011,9 +1263,21 @@
         zustand[feldName] = feldName === "kfaBild" ? Number(knopf.dataset.wert) : knopf.dataset.wert;
         // Wer das Geschlecht wechselt, hat eine andere Bilderleiter — die
         // alte Auswahl passt dann nicht mehr.
-        if (feldName === "geschlecht") zustand.kfaBild = null;
+        if (feldName === "geschlecht") { zustand.kfaBild = null; insProfil("geschlecht", zustand.geschlecht); }
         merken();
         zeichnen();
+        return;
+      }
+      if (ev.target.closest("#nutGeburtstag")) {
+        window.TLGeburtstag.oeffnen({
+          wert: zustand.geburtstag, alterAlt: zustand.alterJahre,
+          fertig: (iso) => {
+            zustand.geburtstag = iso;
+            zustand.alterJahre = window.TLGeburtstag.alter(iso);
+            window.TLGeburtstag.speichern(iso);
+            zeichnen();
+          }
+        });
         return;
       }
       if (ev.target.id === "nutAktPlus") {
@@ -1034,17 +1298,38 @@
         const wert = zustand.gewichtHeute || zustand.gewichtKg;
         if (verlaufEintragen(wert)) {
           // Die frische Wiegung ist der bessere Wert fuer diese Rechnung als
-          // das Gewicht aus dem Profil. Das Profil selbst bleibt unberuehrt —
-          // dort haengen Kraftstufen und Plaene dran.
+          // das Gewicht aus dem Profil.
           zustand.gewichtKg = Number(String(wert).replace(",", "."));
           zustand.gewichtVonWiegung = heutigerTag();
           zustand.gewichtHeute = "";
           merken();
+          /* Mit dem Abgleich (14.11.2026) landet die Wiegung auch im Profil —
+             frueher blieb es unberuehrt, damit Kraftstufen nicht wackeln; jetzt
+             will Benjamin jede Koerperangabe nur einmal machen. Und eine
+             Wiegung gilt SOFORT fuer die Tagesbilanz: sie ist eine bewusste
+             Angabe ("Koerpergewicht eintragen"), kein Herumprobieren — die
+             Rueckfrage gilt nur fuer die uebrigen Angaben im Rechner. */
+          insProfil("gewichtKg", zustand.gewichtKg);
+          bilanzGewicht(zustand.gewichtKg);
         }
         zeichnen();
         return;
       }
       if (ev.target.id === "nutRechnenBtn") rechnen();
+      // Ueber den Schliessen-Knopf, damit dessen Zuhoerer (Zaehler neu
+      // zeichnen) mitlaufen.
+      if (ev.target.id === "nutGewichtFertig") document.getElementById("closeNutritionOverlay")?.click();
+      if (ev.target.id === "nutBilanzJa" || ev.target.id === "nutBilanzNein") {
+        const karte = document.getElementById("nutBilanz");
+        if (ev.target.id === "nutBilanzJa") {
+          bilanzMerken(bilanzWerte(zustand));
+          window.TrainLogicErnaehrung?.profilKarteAktualisieren?.();
+          if (karte) karte.innerHTML = `<div class="nut-hinweis"><b>Übernommen.</b> Deine Tagesbilanz rechnet ab jetzt mit diesen Angaben.</div>`;
+        } else if (karte) {
+          const alt = bilanzGemerkt();
+          karte.innerHTML = `<div class="nut-hinweis">Deine Tagesbilanz bleibt bei den Angaben vom <b>${kurzesDatum(alt ? alt.stand : heutigerTag())}</b>.</div>`;
+        }
+      }
     });
 
     // Zahlenfelder aendern den Zustand OHNE Neuzeichnen — sonst verliert das
@@ -1052,6 +1337,12 @@
     // Auswahlfelder melden sich ueber "change", nicht ueber "input".
     koerper.addEventListener("change", (ev) => {
       const el = ev.target;
+      // Koerperwerte erst beim Verlassen des Felds ins Profil, nicht je
+      // Tastendruck ("8" auf dem Weg zu "83" waere sonst kurz das Gewicht).
+      if (el.dataset && ["gewichtKg", "groesseCm", "alterJahre"].includes(el.dataset.feld)) {
+        insProfil(el.dataset.feld, el.value);
+        return;
+      }
       if (!el.dataset || el.dataset.akt !== "art") return;
       // Der MET wird nicht aus dem Feld gelesen, sondern aus der Liste
       // geholt: im Feld steht der Schluessel, und der Kern rechnet mit MET.
@@ -1083,7 +1374,24 @@
     });
   }
 
+  function titelSetzen(text) {
+    const t = document.querySelector("#nutritionOverlay .video-overlay-title");
+    if (t) t.textContent = text;
+  }
+
+  function openGewichtBlatt() {
+    nurGewicht = true;
+    zeigen();
+    titelSetzen("Körpergewicht");
+  }
+
   function openNutritionOverlay() {
+    nurGewicht = false;
+    zeigen();
+    titelSetzen("Kalorienrechner");
+  }
+
+  function zeigen() {
     const overlay = document.getElementById("nutritionOverlay");
     if (!overlay || !window.NutritionCalc) return;
     const altbestand = schluesselFehlt(gemerkt().aktivitaeten);
@@ -1135,8 +1443,148 @@
   // Aktivitaeten einen Klick samt Neuzeichnen. Genau dieser Aufwand ist der
   // Grund, warum die Verwechslung so lange unbemerkt blieb: geprueft wurde
   // eine Sportart, und die war zufaellig eindeutig.
+  /* Der Tagesbedarf fuer den Kalorienzaehler (js/ernaehrung.js, 13.11.2026).
+     Dieselbe Rechnung wie im Overlay, aus denselben gemerkten Eingaben —
+     mit EINEM Unterschied: statt des Trainingsdurchschnitts (28 Tage Logs,
+     Plan oder Sportarten) steht hier der Sport DIESES Tages.
+
+     Damit der Zaehler nicht still eine eigene Physiologie bekommt, laufen
+     dieselben Funktionen des Rechners mit dem Tageswert (Befund 13.11.2026,
+     Benjamin: "die Zahlen laufen auseinander"). Vorher fehlten drei Dinge:
+       1. der Verdauungsanteil (TEF) auf den Sport: der Rechner teilt
+          GU + Alltag + Training durch 0,9, der Zaehler nur GU + Alltag —
+          an einem Durchschnittstag 40 kcal zu wenig;
+       2. die Untergrenzen (Grundumsatz, Energieverfuegbarkeit) — sie
+          haengen am Trainingsumfang und muessen fuer den Tag neu greifen,
+          das Defizit des Rechners passt nur zu SEINEM Trainingsumfang;
+       3. die Makros: sie gehoerten zum Ziel des Rechners, nicht zum Budget
+          des Tages, und gingen an Ruhe- wie Trainingstagen nicht auf.
+     An einem Tag mit genau dem Durchschnittstraining ist das Ergebnis jetzt
+     auf die Kalorie das des Rechners (Test vorhanden).
+
+     `sportNetto`: Zahl oder Funktion (grundumsatzKcal) -> kcal netto. Die
+     Funktion, weil der Ruheanteil am Grundumsatz haengt, den erst diese
+     Rechnung kennt.
+     `grundbedarfKcal` = Tagesumsatz minus Sport, also mit dem GANZEN
+     Verdauungsanteil; so gilt Grundbedarf + Sport = Verbrauch des Tages.
+     `eingerichtet` ist false, solange der Rechner nie benutzt wurde: dann
+     stammen Ziel und Schritte aus Voreinstellungen, und die Karte bittet
+     erst um den Rechner, statt eine erfundene Bilanz zu zeigen. */
+  /* `opt.alltag` (18.11.2026, Alltag aus Health): Funktion
+     ({ grundumsatzKcal, geschaetztKcal, zuschlagKcal, gewichtKg }) -> kcal
+     oder null. Liefert sie eine Zahl, ersetzt die den geschaetzten Alltag
+     (eingetippte Schritte) fuer diesen Tag; null laesst die Schaetzung. */
+  function tagesbedarf(sportNetto, opt) {
+    const C = window.NutritionCalc;
+    if (!C) return { vollstaendig: false, eingerichtet: false };
+    const vorher = zustand;
+    let eingerichtet = false;
+    try {
+      zustand = zustandAufbauen();
+      /* Die Bilanz rechnet mit den UEBERNOMMENEN Angaben (BILANZ), nicht mit
+         dem letzten Stand im Formular. Wer den Rechner vor dem 14.11.2026
+         schon benutzt hatte, hat noch keinen solchen Stand: dann gilt der
+         gemerkte Stand als uebernommen, damit sich an der Bilanz nichts
+         aendert. Nur Ziel/Koerperdaten/Alltag kommen von dort — der Sport des
+         Tages kommt weiter frisch aus den Logs (sportNetto). */
+      let b = bilanzGemerkt();
+      let gemerktVorhanden = false;
+      try { gemerktVorhanden = localStorage.getItem(SPEICHER) !== null; } catch (err) { /* ohne Speicher */ }
+      if (!b && gemerktVorhanden) { bilanzMerken(bilanzWerte(zustand)); b = bilanzGemerkt(); }
+      eingerichtet = !!b;
+      /* opt.tag: fuer einen VERGANGENEN Tag gelten die Angaben von damals
+         (bedarfAmTag); heute wird der Stand fortgeschrieben. */
+      let korrFest = null;
+      if (b && !WEB) {
+        const heute = heutigerTag();
+        if (opt && typeof opt.tag === "string" && opt.tag < heute) {
+          const damals = bedarfAmTag(opt.tag);
+          if (damals) { b = { werte: damals.werte }; korrFest = Number(damals.korr || 0); }
+        } else bedarfVerlaufFortschreiben(b.werte, korrekturGemerkt().kcal);
+      }
+      if (b) zustand = Object.assign({}, zustand, b.werte);
+      const e = eingabeBauen();
+      const r = C.berechnen(e);
+      if (!r.vollstaendig) return { vollstaendig: false, eingerichtet };
+      const roh = typeof sportNetto === "function" ? sportNetto(r.grundumsatzKcal) : sportNetto;
+      const sport = Math.max(0, Math.round(Number(roh) || 0));
+      let neatKcal = r.neatKcal;
+      if (opt && typeof opt.alltag === "function") {
+        const zuschlag = C.neat({ gewichtKg: e.gewichtKg, schritte: 0, unruhig: e.unruhig }).kcal;
+        const gemessen = opt.alltag({ grundumsatzKcal: r.grundumsatzKcal, geschaetztKcal: r.neatKcal, zuschlagKcal: zuschlag, gewichtKg: e.gewichtKg });
+        if (gemessen != null && isFinite(gemessen) && gemessen >= 0) neatKcal = Math.round(gemessen);
+      }
+      const tag = C.gesamtumsatz({ grundumsatzKcal: r.grundumsatzKcal, neatKcal: neatKcal, trainingKcal: sport });
+      const mager = r.kfa && r.kfa.belastbar ? r.magermasseKg : 0;
+      const z = C.zielKalorien({
+        geschlecht: e.geschlecht,
+        gesamtumsatzKcal: tag.kcal,
+        grundumsatzKcal: r.grundumsatzKcal,
+        gewichtKg: e.gewichtKg,
+        ziel: e.ziel,
+        kfaProzent: r.kfa ? r.kfa.prozent : null,
+        kfaBelastbar: !!(r.kfa && r.kfa.belastbar),
+        kfaQuelle: r.kfa ? r.kfa.quelle : null,
+        trainingLevel: e.trainingLevel,
+        magermasseKg: mager,
+        trainingKcal: sport,
+        trainingMinutenProWoche: r.trainingMinutenProWoche,
+        /* Pruefrunde 3, Befund 6: das Defizit des Rechners (dort schon gegen
+           den Grundumsatz im WOCHENschnitt geprueft) gilt unveraendert fuer
+           jeden Tag. Je Tag greift nur noch die Energieverfuegbarkeit — vorher
+           hob jeder Ruhetag eines Schweren auf den Grundumsatz an, und ueber
+           die Woche blieb weniger Defizit als angesagt. */
+        festeAbweichungKcal: r.abweichungKcal
+      });
+      /* Uebernommene Anpassung aus dem Gewichtsverlauf. Sie senkt nie unter
+         den Grundumsatz und nie, wenn fuer den Tag schon eine Untergrenze
+         greift (Energieverfuegbarkeit) — anheben darf sie immer. */
+      const korr = WEB ? 0 : korrFest != null ? korrFest : korrekturGemerkt().kcal;
+      let zielKcal = z.kcal;
+      if (korr > 0) zielKcal = z.kcal + korr;
+      else if (korr < 0 && !(z.untergrenzeAktiv || z.eaAngehoben)) zielKcal = Math.max(Math.min(z.kcal, r.grundumsatzKcal), z.kcal + korr);
+      const m = C.makros({
+        kcal: zielKcal, gewichtKg: e.gewichtKg, magermasseKg: mager, ziel: z.ziel,
+        geschlecht: e.geschlecht, groesseCm: e.groesseCm, alterJahre: e.alterJahre,
+        // Die KH-Stufen sind an Trainingsstunden je Woche geeicht, nicht am
+        // einzelnen Tag — deshalb bleibt hier der Wochenwert des Rechners.
+        trainingKcalProWoche: r.trainingKcalProWoche,
+        trainingMinutenProWoche: r.trainingMinutenProWoche
+      });
+      return {
+        vollstaendig: true,
+        eingerichtet,
+        grundumsatzKcal: r.grundumsatzKcal,
+        alltagKcal: neatKcal,
+        alltagGeschaetztKcal: r.neatKcal,
+        grundbedarfKcal: tag.kcal - sport,
+        sportKcal: sport,
+        verbrauchtKcal: tag.kcal,
+        zielKcal: zielKcal,
+        abweichungKcal: zielKcal - tag.kcal,
+        korrekturKcal: zielKcal - z.kcal,
+        untergrenzeAktiv: !!(z.untergrenzeAktiv || z.eaAngehoben),
+        ziel: z.ziel,
+        eiweissG: m.eiweissG,
+        khG: m.khG,
+        fettG: m.fettG,
+        // Zum Vergleich: das Ziel des Rechners mit Trainingsdurchschnitt.
+        rechnerZielKcal: r.zielKcal,
+        rechnerAbweichungKcal: r.abweichungKcal
+      };
+    } catch (err) {
+      return { vollstaendig: false, eingerichtet };
+    } finally {
+      zustand = vorher;
+    }
+  }
+
   window.NutritionTool = {
-    openNutritionOverlay, closeNutritionOverlay, starten, AKTIVITAETEN,
+    openNutritionOverlay, openGewichtBlatt, closeNutritionOverlay, starten, AKTIVITAETEN, tagesbedarf,
+    verlaufStand, korrekturUebernehmen, korrekturZuruecknehmen, korrekturGemerkt,
+    // Die Bilderleiter braucht auch der Koerperfett-Rechner der Webseite
+    // (docs/website/rechner/koerperfett) — dort als Einordnung des Ergebnisses.
+    LEITER,
     aktivitaetenOptionen, aktivitaetZeile, schluesselFehlt, GEHEN_ART
   };
 })();

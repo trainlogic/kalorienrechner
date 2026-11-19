@@ -171,27 +171,73 @@
      0,66 — eine Luecke von 0,25 kg. Mit 0,9 verspraeche sie 1,17 kg bei
      unveraenderten 0,66, also 0,51 kg Luecke. Das Ergebnis bliebe gleich,
      nur die Enttaeuschung waere groesser. Ein Test sichert die Luecke. */
+  /* NACHTRAG 15.11.2026 (Pruefrunde 3): die unterste Stufe stand bei 0,3 %.
+     Kein Positionspapier geht unter 0,5 % (Aragon u. a., ISSN 2017: 0,5-1,0;
+     Helms u. a. 2014, Wettkampfvorbereitung: 0,5-1,0; Garthe 2011: 0,7 war
+     die LANGSAME Gruppe). 0,3 % sind bei einer 62-kg-Frau rund 200 kcal —
+     kleiner als die Streuung der Formel, also von "nichts passiert" nicht
+     zu unterscheiden. Jetzt 0,5 / 0,6 / 0,7. Und seit derselben Runde
+     erreicht die 0,7 Schwere wieder: die Untergrenzen sind bei hohem
+     Fettanteil gelockert (siehe zielKalorien). Die Begruendung oben ("diese
+     Stufe erreicht keinen Nutzer") ist damit Geschichte. */
   var ABNEHM_RATEN = {
-    mann: [{ bisKfa: 15, rate: 0.3 }, { bisKfa: 25, rate: 0.5 }, { bisKfa: 100, rate: 0.7 }],
-    frau: [{ bisKfa: 25, rate: 0.3 }, { bisKfa: 35, rate: 0.5 }, { bisKfa: 100, rate: 0.7 }]
+    mann: [{ bisKfa: 15, rate: 0.5 }, { bisKfa: 25, rate: 0.6 }, { bisKfa: 100, rate: 0.7 }],
+    frau: [{ bisKfa: 25, rate: 0.5 }, { bisKfa: 35, rate: 0.6 }, { bisKfa: 100, rate: 0.7 }]
   };
   var ABNEHM_RATE_UNBEKANNT = 0.5;
 
-  // Aufbaurate in Prozent Koerpergewicht je Woche. Der Anfaenger darf
-  // schneller zunehmen, weil bei ihm mehr davon Muskel wird.
+  /* Ab hier gilt ein Fettanteil als "hoch" (Pruefrunde 3, Evidenz C fuer die
+     Grenzen): die Marken der Energieverfuegbarkeit stammen von mageren
+     Sportlerinnen, und der Grundumsatz als harte Untergrenze ist bei
+     Adipoesen unnoetig hoch. Ueber der Grenze: EA-Untergrenze nur bei viel
+     Training, GU-Untergrenze bei 90 %. Beim Aufbau gibt es ab hier einen
+     Hinweis auf Rekomposition. */
+  var KFA_HOCH = { mann: 25, frau: 35 };
+  var EA_NUR_AB_MINUTEN_WOCHE = 300;     // 5 h Training: dann schuetzt EA auch Schwere
+  var GU_UNTERGRENZE_HOCH = 0.9;
+
+  /* AUFBAU als Anteil am Umsatz (Pruefrunde 3). Vorher Rate x 7700 kcal/kg —
+     als waere jeder Zuwachs Fettgewebe; ein 105-kg-Einsteiger bekam +462 kcal
+     (18 %). Helms u. a. 2023 (Trainierte, 5 gegen 15 % Ueberschuss): kaum mehr
+     Muskel, mehr Fett beim grossen Ueberschuss. Einsteiger 10 %, sonst 7 und
+     5 %. Evidenz B fuer "klein", C fuer die genauen Prozente. */
+  var AUFBAU_UEBERSCHUSS = { beginner: 0.10, regular: 0.07, competitive: 0.05 };
+  /* Energiedichte des Zuwachses, um aus dem Ueberschuss eine Rate zu machen.
+     Magermasse ~1800 kcal/kg, Fettgewebe ~7700 (Hall 2008); bei einem
+     Drittel Magermasse im Zuwachs rund 5700. Evidenz C fuer den Anteil. */
+  var KCAL_JE_KG_ZUWACHS = 5700;
+  // Nur noch fuer zielRate ohne Umsatz (Zielkarte vor der Rechnung): grobe
+  // Rate je Stufe, aus dem Ueberschuss bei einem typischen Umsatz.
   var AUFBAU_RATEN = { beginner: 0.40, regular: 0.25, competitive: 0.15 };
 
   // Eiweiss je kg Magermasse. Im Defizit hoeher, weil dort Magermasse
   // geschuetzt werden muss.
-  var EIWEISS_JE_KG_LBM = { abnehmen: 2.4, halten: 2.0, zunehmen: 2.0 };
+  /* ANGEHOBEN AM 19.11.2026 (Benjamin: "Eiweiss ist nach meinem Geschmack
+     auch zu wenig"; "in der Diaet mehr als das Doppelte des Koerpergewichts";
+     "Eiweiss saettigt ... thermic effect"). Pruefung des Sportwissenschaftlers
+     am selben Tag:
+       - Halten/Aufbauen 1,6 -> 1,8 (LBM 2,0 -> 2,2): 1,62 aus Morton 2018 ist
+         der MITTLERE Bedarf einer Gruppe, die Haelfte liegt darueber; die
+         sichere Zufuhr fuer den Einzelnen liegt hoeher (Kato 2016: 1,83;
+         Bandegan 2017: bis 2,2; ISSN 2017: 1,4-2,0). Evidenz B fuer die
+         Richtung, C fuer die Zahl.
+       - Abnehmen 2,0 -> 2,2 (LBM 2,4 -> 2,6): das Band 2,3-3,1 g/kg FFM
+         (Helms 2014, ISSN 2017) liegt bei einem Schlanken (bis ~15 Prozent)
+         ganz ueber 2,0 g/kg Koerpergewicht; die 2,0 sassen an der Unterkante.
+         Dass 2,2 mehr Muskel schuetzt als 2,0, ist NICHT direkt gezeigt
+         (Evidenz C); dazu kommt die Saettigung im Defizit. Der Preis sind
+         Kohlenhydrate am Ruhetag (82 kg: 153 -> 115 g samt neuer Fettregel).
+     Die Quellen sind aus dem Gedaechtnis zitiert, nicht nachgeschlagen. */
+  var EIWEISS_JE_KG_LBM = { abnehmen: 2.6, halten: 2.2, zunehmen: 2.2 };
   // Ohne belastbare Magermasse: je kg Koerpergewicht.
-  var EIWEISS_JE_KG_KG = { abnehmen: 2.0, halten: 1.6, zunehmen: 1.6 };
+  var EIWEISS_JE_KG_KG = { abnehmen: 2.2, halten: 1.8, zunehmen: 1.8 };
 
   /* Einseitiger Deckel fuer Schwere OHNE Messung.
      ------------------------------------------------------------------------
      Die Werte je kg Koerpergewicht sind an einem Nutzer mit rund 20 Prozent
-     Koerperfett geeicht: 2,0 g/kg Magermasse mal 0,80 ergibt genau die 1,6
-     g/kg Koerpergewicht darueber. Bei jemandem mit 40 Prozent stimmt diese
+     Koerperfett geeicht: 2,2 g/kg Magermasse mal 0,80 ergibt rund die 1,8
+     g/kg Koerpergewicht darueber (bis 19.11.2026: 2,0 und 1,6; die Zahlen in
+     diesem Absatz stammen aus der Zeit mit 2,0 g/kg im Defizit). Bei jemandem mit 40 Prozent stimmt diese
      Eichung nicht mehr — nachgerechnet bekommt ein Mann mit 130 kg im Defizit
      260 g Eiweiss, und das sind 3,39 g je kg geschaetzter fettfreier Masse.
      Eine Frau mit 95 kg landet bei 3,65. Beides liegt UEBER dem oberen Ende
@@ -204,7 +250,13 @@
      3,1 * FFM_Deurenberg unterschreitet 2,0 * Gewicht erst ab einem
      geschaetzten Fettanteil von 35,5 Prozent. Deurenberg muesste einem
      Trainierten also ueber 35,5 Prozent zuschreiben, damit der Deckel ihn
-     ueberhaupt beruehrt — das tut sie nicht. Eine geschaetzte Groesse darf
+     ueberhaupt beruehrt — das tut sie nicht.
+     SEIT 19.11.2026 (2,2 g/kg im Defizit) greift der Deckel schon ab 29
+     Prozent — also auch bei normalgewichtigen Frauen (70 kg / 165 cm / 40 J.:
+     142 statt 154 g). Dort rechnet er nur still auf die fettfreie Masse um;
+     der HINWEIS "waere bei dir zu viel" erscheint weiter erst, wenn er unter
+     2,0 g je kg drueckt (EIWEISS_DECKEL_HINWEIS_AB), also bei den Schweren,
+     fuer die er gedacht ist. Eine geschaetzte Groesse darf
      unter genau diesen zwei Bedingungen eingreifen: sie senkt nur, und sie
      erreicht nur den Fall, fuer den sie gedacht ist.
 
@@ -216,6 +268,7 @@
      Fuer sehr Adipoese gibt es KEINE Trainingsstudie — Refalo 2025 schliesst
      sie aus (Maenner bis 27,8, Frauen bis 39,7 Prozent). */
   var EIWEISS_MAX_JE_KG_LBM_GESCHAETZT = 3.1;
+  var EIWEISS_DECKEL_HINWEIS_AB = 2.0;   // g je kg Koerpergewicht, siehe oben
 
   /* Fett: der Zielwert ist ein ENERGIEANTEIL, und die Untergrenze auch.
 
@@ -249,6 +302,19 @@
      dort auf. */
   var FETT_ANTEIL_KCAL = 0.25;          // Zielanteil an den Kalorien
   var FETT_MIN_JE_KG = 0.5;             // absolute Untergrenze je kg Koerpergewicht
+  /* SOLLWERT JE KG, GEDECKELT (19.11.2026, Benjamin: "mit ueber 80 kg nur
+     46 g Fett"). Die Prozentregel allein traegt beim Halten und Aufbauen
+     (0,9-1,0 g/kg), aber der Tageszaehler skaliert das Fett mit dem
+     Tagesziel: am Ruhetag im Defizit blieben 0,57 g/kg (47 g bei 82 kg).
+     Belegt ist kein Schaden dort (Iraki 2019: 0,5-1,5 g/kg, Evidenz C);
+     die 0,8 sind Konvention plus Essbarkeit, kein Messwert. Darum der
+     Deckel bei 30 Prozent der Tageskalorien: er verhindert genau den Fall
+     aus dem Kommentar oben (110 kg im Defizit, 0,8 g/kg = 40 Prozent).
+       fett = max(25 % kcal, min(0,8 g/kg, 30 % kcal), 0,5 g/kg)
+     Wird es bei den Kohlenhydraten zu knapp, zuerst DIESEN Wert
+     zuruecknehmen, nicht das Eiweiss: er hat die schwaechste Begruendung. */
+  var FETT_SOLL_JE_KG = 0.8;
+  var FETT_SOLL_MAX_ANTEIL = 0.30;
   /* Kohlenhydrate: die Warnschwelle haengt am TRAININGSUMFANG, nicht an einer
      festen Zahl je Kilogramm.
 
@@ -294,6 +360,17 @@
   var EA_HINWEIS = 30;        // kcal je kg fettfreier Masse
   var EA_UNTERGRENZE = 25;
 
+  /* NACHTRAG 15.11.2026 (Pruefrunde 3): Burke 2011 staffelt nach STUNDEN,
+     nicht nach kcal — dieselben 8 h je Woche landeten bei einer 55-kg-Frau
+     in Stufe 5 und bei einem 90-kg-Mann in Stufe 6. Jetzt nach Minuten am
+     Tag (Wochenschnitt); die kcal-Stufen bleiben nur als Rueckfall, wenn
+     keine Dauer bekannt ist. */
+  var KH_STUFEN_MIN = [
+    { bisMinTag: 25, jeKg: 3 },
+    { bisMinTag: 50, jeKg: 4 },
+    { bisMinTag: 90, jeKg: 5 },
+    { bisMinTag: Infinity, jeKg: 6 }
+  ];
   var KH_STUFEN = [
     { bisKcalWoche: 1000, jeKg: 3 },
     { bisKcalWoche: 2500, jeKg: 4 },
@@ -533,6 +610,7 @@
     var gewicht = zahl(gewichtKg);
     var kcalWoche = 0;
     var minutenWoche = 0;
+    var ruheMinutenWoche = 0;
     var ausPlan = 0;
     var geschaetzt = 0;
 
@@ -543,17 +621,23 @@
       if (zahl(e.kcal) > 0) {
         kcalWoche += zahl(e.kcal) * haeufigkeit;
         minutenWoche += zahl(e.minuten) * haeufigkeit;
+        // ruheMinuten: nur die Minuten BRUTTO geschaetzter Einheiten (aus
+        // trainingAusLogs). Gemessene Netto-Werte bekommen keinen Abzug.
+        ruheMinutenWoche += (e.ruheMinuten === undefined ? zahl(e.minuten) : zahl(e.ruheMinuten)) * haeufigkeit;
         ausPlan++;
         continue;
       }
 
-      var met = zahl(e.met);
       var minuten = zahl(e.minuten);
-      if (met > 0 && minuten > 0 && gewicht > 0) {
-        // MET * kg * Stunden = kcal. Der MET-Wert ist ein Vielfaches des
-        // Ruheumsatzes, die Rechnung ist also bruttoseitig.
-        kcalWoche += met * gewicht * (minuten / 60) * haeufigkeit;
+      var proStunde = e.watt > 0 && gewicht > 0 ? kcalAusLeistung(e.formel, zahl(e.watt), gewicht, 60) : 0;
+      var met = zahl(e.met);
+      if (!(proStunde > 0) && met > 0 && gewicht > 0) proStunde = met * gewicht;
+      if (proStunde > 0 && minuten > 0) {
+        // MET * kg * Stunden = kcal (brutto, der Ruheumsatz steckt drin).
+        // Bei Watt-Stufen die Leistung statt des Koerpergewichts (Befund 5).
+        kcalWoche += proStunde * (minuten / 60) * haeufigkeit;
         minutenWoche += minuten * haeufigkeit;
+        ruheMinutenWoche += minuten * haeufigkeit;
         geschaetzt++;
       }
     }
@@ -561,12 +645,54 @@
     return {
       kcalProWoche: Math.round(kcalWoche),
       kcal: Math.round(kcalWoche / 7),
+      minutenProTag: Math.round(minutenWoche / 7),
+      minutenProWoche: Math.round(minutenWoche),
       // Fuer den Abzug des Ruheanteils (siehe ruheanteilKcal): ohne die Dauer
       // laesst er sich nicht rechnen.
-      minutenProTag: Math.round(minutenWoche / 7),
+      ruheMinutenProTag: Math.round(ruheMinutenWoche / 7),
       einheitenAusPlan: ausPlan,
       einheitenGeschaetzt: geschaetzt
     };
+  }
+
+  /* NETTO ODER BRUTTO (Pruefrunde 3, Befund 2). Der CalorieEstimator rechnet
+     brutto; davon wird der Ruheanteil abgezogen. Zwei Quellen sind aber
+     schon netto: Apple Health / Health Connect liefern AKTIVE Energie (ohne
+     Grundumsatz), und der Pulsweg ueber %HRR liefert bei Ruhepuls null. Ein
+     zweiter Abzug zaehlte dort den Ruheumsatz einmal zu wenig — mit Uhr
+     gemessenes Krafttraining kam 37 % zu niedrig an. Dieselbe Regel steht in
+     ernaehrung-kern.js (Test vergleicht beide). */
+  function istNettoSchaetzung(ce) {
+    ce = ce || {};
+    return ce.source === "health_connect" || /^hr_hrr/.test(String(ce.method || ""));
+  }
+  /* Die kcal fuer die Ernaehrung (Befund 8): der Estimator skaliert viele
+     Wege mit einem bodyFactor (Gewicht hoch 0,75, Frauen x 0,87, Alter), der
+     fuer XP und Historie bleibt. Fuer die Energiebilanz gilt bei Bewegung mit
+     eigenem Gewicht lineare Massenskalierung — der Estimator legt dafuer
+     `kcalErnaehrung` daneben. Gemessene Werte haben keinen. */
+  function ernaehrungsKcal(ce) {
+    ce = ce || {};
+    if (ce.source !== "health_connect" && zahl(ce.kcalErnaehrung) > 0) return zahl(ce.kcalErnaehrung);
+    return zahl(ce.calories);
+  }
+
+  /* Kalorien bei vorgegebener LEISTUNG (Befund 5). Bei Watt bestimmt die
+     aeussere Arbeit den Verbrauch, nicht die Koerpermasse — MET x kg gab
+     einem 105-kg-Mann am Ergometer 17-50 % zu viel und einer 55-kg-Frau
+     28-40 % zu wenig. Brutto (mit Ruheumsatz), wie MET.
+       rad:    ACSM-Gleichung Beinergometer, VO2 [ml/min] = 1,8 x kg·m/min +
+               7 x kg (davon 3,5 Ruhe + 3,5 unbelastetes Treten);
+               1 W = 6,12 kg·m/min; 5 kcal je Liter O2.
+       rudern: ~20 % Bruttowirkungsgrad: kcal/h = W x 3,6 / 4,184 / 0,20.
+     Evidenz A (ACSM-Lehrbuchstand), B fuer den Rudern-Wirkungsgrad. */
+  function kcalAusLeistung(formel, watt, gewichtKg, minuten) {
+    var w = zahl(watt), kg = zahl(gewichtKg), min = zahl(minuten);
+    if (!(w > 0) || !(min > 0)) return 0;
+    var proMin;
+    if (formel === "rudern") proMin = w * 3.6 / 4.184 / 0.20 / 60;
+    else proMin = (1.8 * w * 6.12 + 7 * kg) / 1000 * 5;
+    return Math.round(proMin * min);
   }
 
   /* Trainingsanteil aus den WIRKLICH absolvierten Einheiten.
@@ -587,19 +713,19 @@
     var grenze = jetzt - tage * 24 * 60 * 60 * 1000;
 
     var liste = Array.isArray(logs) ? logs : [];
-    var kcal = 0, minuten = 0, einheiten = 0, aeltestes = null;
+    var kcal = 0, minuten = 0, ruheMinuten = 0, einheiten = 0, aeltestes = null;
 
     for (var i = 0; i < liste.length; i++) {
       var log = liste[i] || {};
       var zeit = Date.parse(log.loggedAt || log.date || "");
       if (!isFinite(zeit) || zeit < grenze || zeit > jetzt) continue;
-      var k = zahl(log.calorieEstimate && log.calorieEstimate.calories);
+      var ce = log.calorieEstimate || {};
+      var k = ernaehrungsKcal(ce);
       if (!(k > 0)) continue;
       kcal += k;
-      minuten += zahl(
-        (log.calorieEstimate && log.calorieEstimate.durationMinutes) ||
-        (log.result && log.result.durationMinutes)
-      );
+      var m = zahl(ce.durationMinutes || (log.result && log.result.durationMinutes));
+      minuten += m;
+      if (!istNettoSchaetzung(ce)) ruheMinuten += m;
       einheiten++;
       if (aeltestes === null || zeit < aeltestes) aeltestes = zeit;
     }
@@ -616,6 +742,7 @@
       kcalProWoche: Math.round(kcal / spanne * 7),
       minutenProTag: Math.round(minuten / spanne),
       minutenProWoche: Math.round(minuten / spanne * 7),
+      ruheMinutenProWoche: Math.round(ruheMinuten / spanne * 7),
       einheiten: einheiten,
       einheitenProWoche: spanne > 0 ? runde(einheiten / spanne * 7, 1) : 0,
       tageBeruecksichtigt: spanne,
@@ -669,6 +796,41 @@
      was das Ziel bedeutet. Bisher stand die Rate erst im Ergebnis, also nach
      der Entscheidung. Was am Ende herauskommt, kann davon abweichen — beide
      Untergrenzen koennen anheben —, deshalb heisst es dort "geplant". */
+  /* Taugt der Fettanteil fuer die RATE? Gemessen ja — und seit Pruefrunde 3
+     auch aus der Bilderreihe: dort stand "er beeinflusst nur deine
+     Abnehmrate", aber abnehmRate gab ohne Messung immer 0,5 zurueck. Fuer die
+     Rate reicht eine grobe Schaetzung (5 Prozentpunkte daneben verschieben
+     hoechstens um eine Stufe); Grundumsatz, EA und Eiweiss bleiben bei der
+     Messung. Deurenberg ("schaetzung") bleibt draussen. */
+  function kfaFuerRate(e) {
+    return !!e.kfaBelastbar || e.kfaQuelle === "bild";
+  }
+  function kfaHoch(g, kfa, taugt) {
+    return taugt && kfa !== null && kfa >= (KFA_HOCH[g] || KFA_HOCH.mann);
+  }
+  function kfaZahl(e) {
+    return e.kfaProzent === null || e.kfaProzent === undefined || e.kfaProzent === "" ? null : zahl(e.kfaProzent);
+  }
+
+  /* Rate in Prozent Koerpergewicht je Woche aus einer Abweichung in kcal/Tag.
+     Der TEF-Faktor: im Defizit sinkt auch der Verdauungsanteil, der in der
+     Erhaltung steckt — real kommt nur (1 - TEF) der Abweichung an
+     (Pruefrunde 3, Befund 9). Abnehmen rechnet mit 7700 kcal/kg Fettgewebe,
+     Aufbau mit dem gemischten Zuwachs. */
+  function rateAusAbweichung(abweichung, gewicht) {
+    if (!(gewicht > 0) || !abweichung) return 0;
+    var real = Math.abs(abweichung) * (1 - TEF_ANTEIL);
+    var dichte = abweichung < 0 ? KCAL_JE_KG_FETT : KCAL_JE_KG_ZUWACHS;
+    return runde(real * 7 / dichte / gewicht * 100, 2);
+  }
+
+  /* Die GEPLANTE Rate zu einem Ziel — ohne Untergrenzen.
+
+     Wozu getrennt: die Oberflaeche soll schon bei der Zielwahl sagen koennen,
+     was das Ziel bedeutet. Was am Ende herauskommt, kann davon abweichen —
+     Untergrenzen koennen anheben —, deshalb heisst es dort "geplant".
+     Beim Aufbau braucht es den Umsatz (Ueberschuss = Anteil davon); ohne ihn
+     gilt eine grobe Rate je Stufe. */
   function zielRate(e) {
     e = e || {};
     var g = geschlecht(e.geschlecht);
@@ -676,22 +838,31 @@
     if (ziel === "halten") return { ziel: ziel, rateProWoche: 0, kgProWoche: 0, kcalProTag: 0 };
 
     var gewicht = zahl(e.gewichtKg);
-    var rate;
+    var tdee = zahl(e.gesamtumsatzKcal);
+    var rate, kcal;
     if (ziel === "abnehmen") {
-      rate = abnehmRate(
-        g,
-        e.kfaProzent === null || e.kfaProzent === undefined ? null : zahl(e.kfaProzent),
-        !!e.kfaBelastbar
-      );
+      rate = abnehmRate(g, kfaZahl(e), kfaFuerRate(e));
+      kcal = -Math.round(gewicht * rate / 100 * KCAL_JE_KG_FETT / 7 / (1 - TEF_ANTEIL));
     } else {
-      rate = AUFBAU_RATEN[e.trainingLevel] !== undefined ? AUFBAU_RATEN[e.trainingLevel] : AUFBAU_RATEN.regular;
+      var anteil = AUFBAU_UEBERSCHUSS[e.trainingLevel] !== undefined ? AUFBAU_UEBERSCHUSS[e.trainingLevel] : AUFBAU_UEBERSCHUSS.regular;
+      if (tdee > 0) {
+        kcal = Math.round(tdee * anteil);
+        rate = rateAusAbweichung(kcal, gewicht);
+      } else {
+        rate = AUFBAU_RATEN[e.trainingLevel] !== undefined ? AUFBAU_RATEN[e.trainingLevel] : AUFBAU_RATEN.regular;
+        kcal = Math.round(gewicht * rate / 100 * KCAL_JE_KG_ZUWACHS / 7 / (1 - TEF_ANTEIL));
+      }
     }
-
-    var kg = gewicht * rate / 100;
-    var kcal = Math.round(kg * KCAL_JE_KG_FETT / 7) * (ziel === "abnehmen" ? -1 : 1);
-    return { ziel: ziel, rateProWoche: rate, kgProWoche: runde(kg, 2), kcalProTag: gewicht > 0 ? kcal : 0 };
+    return { ziel: ziel, rateProWoche: rate, kgProWoche: runde(gewicht * rate / 100, 2), kcalProTag: gewicht > 0 ? kcal : 0 };
   }
 
+  /* e.festeAbweichungKcal (Pruefrunde 3, Befund 6): der Kalorienzaehler legt
+     das Defizit des Rechners unveraendert auf jeden Tag. Die GU-Untergrenze
+     gilt dann fuer den Wochenschnitt (der Rechner hat sie schon angewandt) und
+     wird NICHT je Kalendertag neu gezogen — sonst hob jeder Ruhetag eines
+     Schweren auf den Grundumsatz, und ueber die Woche blieben 0,43 statt
+     0,50 %. Die EA-Untergrenze dagegen gilt je Tag ("fuel for the work
+     required"). */
   function zielKalorien(e) {
     e = e || {};
     var g = geschlecht(e.geschlecht);
@@ -705,70 +876,76 @@
       return { kcal: 0, ziel: ziel, abweichungKcal: 0, rateProWoche: 0, kgProWoche: 0, untergrenzeAktiv: false, hinweise: hinweise };
     }
 
+    var kfa = kfaZahl(e);
+    var taugt = kfaFuerRate(e);
+    var hoch = kfaHoch(g, kfa, taugt);
+    var fest = typeof e.festeAbweichungKcal === "number" && isFinite(e.festeAbweichungKcal);
     var rate = 0;
     var abweichung = 0;
 
-    if (ziel === "abnehmen") {
-      rate = abnehmRate(g, e.kfaProzent === null || e.kfaProzent === undefined ? null : zahl(e.kfaProzent), !!e.kfaBelastbar);
-      if (!e.kfaBelastbar) {
-        hinweise.push("Ohne gemessenen Körperfettanteil rechnen wir mit der mittleren Abnehmrate. Miss nach, dann wird sie genauer.");
+    if (fest) {
+      abweichung = Math.round(e.festeAbweichungKcal);
+      rate = rateAusAbweichung(abweichung, gewicht);
+    } else if (ziel === "abnehmen") {
+      rate = abnehmRate(g, kfa, taugt);
+      if (!taugt) {
+        hinweise.push("Ohne Körperfettanteil rechnen wir mit der mittleren Abnehmrate. Wähl ein Bild oder miss nach, dann passt sie zu dir.");
       }
-      abweichung = -Math.round(gewicht * rate / 100 * KCAL_JE_KG_FETT / 7);
+      // Durch (1 - TEF): im Defizit sinkt auch der Verdauungsanteil, sonst
+      // kaeme real nur 90 % des geplanten Defizits an.
+      abweichung = -Math.round(gewicht * rate / 100 * KCAL_JE_KG_FETT / 7 / (1 - TEF_ANTEIL));
     } else if (ziel === "zunehmen") {
-      var stufe = AUFBAU_RATEN[e.trainingLevel] !== undefined ? AUFBAU_RATEN[e.trainingLevel] : AUFBAU_RATEN.regular;
-      rate = stufe;
-      abweichung = Math.round(gewicht * rate / 100 * KCAL_JE_KG_FETT / 7);
+      var anteil = AUFBAU_UEBERSCHUSS[e.trainingLevel] !== undefined ? AUFBAU_UEBERSCHUSS[e.trainingLevel] : AUFBAU_UEBERSCHUSS.regular;
+      abweichung = Math.round(tdee * anteil);
+      rate = rateAusAbweichung(abweichung, gewicht);
+      if (hoch) {
+        hinweise.push("Bei deinem Körperfettanteil baust du mit Krafttraining und viel Eiweiß auch beim Halten oder in einem leichten Defizit Muskeln auf. Ein Überschuss macht dich vor allem schwerer.");
+      }
     }
 
     var kcal = tdee + abweichung;
 
-    // Untergrenze ist der Grundumsatz selbst, nicht eine feste Zahl:
-    // dauerhaft unter dem eigenen Ruheumsatz zu essen ist keine Diät mehr.
-    var untergrenze = gu > 0 ? gu : 0;
+    // Untergrenze: der Grundumsatz — bei hohem Fettanteil 90 % davon, dort
+    // ist der volle Grundumsatz als Schwelle unnoetig hoch (Pruefrunde 3).
+    var untergrenze = fest ? 0 : (gu > 0 ? Math.round(gu * (hoch ? GU_UNTERGRENZE_HOCH : 1)) : 0);
     var untergrenzeAktiv = false;
     if (untergrenze > 0 && kcal < untergrenze) {
-      hinweise.push("Das errechnete Defizit läge unter deinem Grundumsatz. Wir heben die Vorgabe auf den Grundumsatz an — abnehmen wirst du dann langsamer.");
+      hinweise.push(hoch
+        ? "Das errechnete Defizit läge deutlich unter deinem Grundumsatz. Wir heben die Vorgabe an — abnehmen wirst du dann etwas langsamer."
+        : "Das errechnete Defizit läge unter deinem Grundumsatz. Wir heben die Vorgabe auf den Grundumsatz an — abnehmen wirst du dann langsamer.");
       kcal = untergrenze;
       untergrenzeAktiv = true;
       abweichung = kcal - tdee;
-      /* DIE RATE MUSS MIT. Sie wird angezeigt ("geplant fuer rund 0,7 %
-         Koerpergewicht pro Woche") und ist die einzige Zahl, an der der
-         Nutzer nach vier Wochen prueft, ob es funktioniert hat. Ohne diese
-         Zeile stand ueber einem gedeckelten Defizit von 334 kcal weiterhin
-         0,7 Prozent — tatsaechlich folgen daraus 0,32. Wer das nachrechnet,
-         haelt den Rechner fuer kaputt. */
-      rate = gewicht > 0
-        ? runde(Math.abs(abweichung) * 7 / KCAL_JE_KG_FETT / gewicht * 100, 2)
-        : 0;
+      /* DIE RATE MUSS MIT. Sie wird angezeigt und ist die Zahl, an der der
+         Nutzer nach vier Wochen prueft, ob es funktioniert hat. */
+      rate = rateAusAbweichung(abweichung, gewicht);
     }
 
     /* Zweite Untergrenze: die Energieverfuegbarkeit. Sie kommt NACH dem
        Grundumsatz, weil sie nur anheben kann — und weil sie den
-       Trainingsumfang kennt, den der Grundumsatz nicht kennt. */
+       Trainingsumfang kennt. Bei hohem Fettanteil nur bei viel Training:
+       die Marken stammen von mageren Sportlerinnen (Pruefrunde 3). */
     var magermasse = zahl(e.magermasseKg);
     var trainingKcal = zahl(e.trainingKcal);
+    var minutenWoche = zahl(e.trainingMinutenProWoche);
     var ea = null;
     var eaAngehoben = false;
+    var eaGilt = !hoch || minutenWoche >= EA_NUR_AB_MINUTEN_WOCHE;
 
     if (magermasse > 0) {
       ea = (kcal - trainingKcal) / magermasse;
-      if (ea < EA_UNTERGRENZE) {
+      if (ea < EA_UNTERGRENZE && eaGilt) {
         var noetig = Math.round(EA_UNTERGRENZE * magermasse + trainingKcal);
         hinweise.push("Nach deinem Training bleiben nur " + Math.round(ea) + " kcal je kg fettfreier Masse übrig — zu wenig für alles, was dein Körper sonst noch tut. Wir heben die Vorgabe an. Wer dauerhaft darunter bleibt, verliert Hormonlage, Knochendichte und am Ende auch Leistung.");
         kcal = noetig;
         eaAngehoben = true;
         abweichung = kcal - tdee;
-        rate = gewicht > 0
-          ? runde(Math.abs(abweichung) * 7 / KCAL_JE_KG_FETT / gewicht * 100, 2)
-          : 0;
+        rate = rateAusAbweichung(abweichung, gewicht);
         ea = (kcal - trainingKcal) / magermasse;
-      } else if (ea < EA_HINWEIS) {
-        /* DER TEXT HAENGT AM ZIEL, aus demselben Grund wie bei den
-           Kohlenhydraten: ein Defizit SENKT die Energieverfuegbarkeit, das
-           ist keine Nebenwirkung, sondern seine Funktionsweise. Wer abnimmt,
-           landet fast immer unter 30 — ein Alarm waere dort keine
-           Information. Wer dagegen HAELT und trotzdem darunter liegt, isst
-           schlicht zu wenig fuer sein Training, ohne es zu wollen. */
+      } else if (ea < EA_HINWEIS && eaGilt) {
+        /* DER TEXT HAENGT AM ZIEL: ein Defizit SENKT die Energieverfuegbarkeit,
+           das ist seine Funktionsweise. Wer dagegen HAELT und trotzdem
+           darunter liegt, isst zu wenig fuer sein Training. */
         var eaText = Math.round(ea);
         if (ziel === "abnehmen") {
           hinweise.push("Nach dem Training bleiben " + eaText + " kcal je kg fettfreier Masse übrig. Unter 30 ist beim Abnehmen normal. Auf die Dauer kommt es an: ein paar Wochen sind in Ordnung, ein halbes Jahr nicht.");
@@ -783,20 +960,25 @@
       ziel: ziel,
       abweichungKcal: Math.round(abweichung),
       rateProWoche: rate,
-      // Dieselbe Rate in Kilogramm. Sie wird HIER gerechnet und nicht in der
-      // Anzeige, weil `rate` an dieser Stelle schon zurueckgerechnet ist:
-      // greift eine Untergrenze, ist die tatsaechliche Rate kleiner als die
-      // geplante. Wer in der Oberflaeche selbst multipliziert, zeigt die
-      // geplante Zahl und meint die erreichte.
+      // Hier gerechnet, nicht in der Anzeige: greift eine Untergrenze, ist
+      // die tatsaechliche Rate kleiner als die geplante.
       kgProWoche: runde(gewicht * rate / 100, 2),
       untergrenzeAktiv: untergrenzeAktiv,
       energieverfuegbarkeit: ea === null ? null : runde(ea, 1),
       eaAngehoben: eaAngehoben,
+      kfaHoch: hoch,
       hinweise: hinweise
     };
   }
 
-  function khWarngrenze(trainingKcalProWoche) {
+  function khWarngrenze(trainingKcalProWoche, minutenProWoche) {
+    var min = zahl(minutenProWoche);
+    if (min > 0) {
+      var proTag = min / 7;
+      for (var j = 0; j < KH_STUFEN_MIN.length; j++) {
+        if (proTag < KH_STUFEN_MIN[j].bisMinTag) return KH_STUFEN_MIN[j].jeKg;
+      }
+    }
     var w = zahl(trainingKcalProWoche);
     for (var i = 0; i < KH_STUFEN.length; i++) {
       if (w < KH_STUFEN[i].bisKcalWoche) return KH_STUFEN[i].jeKg;
@@ -846,7 +1028,9 @@
         );
         if (deckel < eiweissG) {
           eiweissG = deckel;
-          gedeckeltAufFfm = true;
+          // Der Satz "waere bei dir zu viel" nur fuer die Schweren (siehe
+          // Kommentar am Deckel); darueber rechnet er still um.
+          gedeckeltAufFfm = deckel < EIWEISS_DECKEL_HINWEIS_AB * gewicht;
         }
       }
 
@@ -859,7 +1043,8 @@
     }
 
     var fettMin = FETT_MIN_JE_KG * gewicht;
-    var fettG = Math.max(kcal * FETT_ANTEIL_KCAL / KCAL_JE_G.fett, fettMin);
+    var fettSoll = Math.min(FETT_SOLL_JE_KG * gewicht, kcal * FETT_SOLL_MAX_ANTEIL / KCAL_JE_G.fett);
+    var fettG = Math.max(kcal * FETT_ANTEIL_KCAL / KCAL_JE_G.fett, fettSoll, fettMin);
 
     var restKcal = kcal - eiweissG * KCAL_JE_G.eiweiss - fettG * KCAL_JE_G.fett;
 
@@ -891,7 +1076,7 @@
        Preis des Defizits und kein Fehler. Ein Hinweis, der bei jedem
        Abnehmenden als Mangel erscheint, wird ueberlesen, und dann ueberliest
        man auch den Fall, in dem wirklich Treibstoff fehlt. */
-    var grenze = khWarngrenze(e.trainingKcalProWoche);
+    var grenze = khWarngrenze(e.trainingKcalProWoche, e.trainingMinutenProWoche);
     if (khG < grenze * gewicht) {
       var jeKg = Math.round(khG / gewicht * 10) / 10;
       var text = String(jeKg).replace(".", ",");
@@ -899,7 +1084,7 @@
         hinweise.push("Mit " + text + " g Kohlenhydraten je kg liegst du unter dem, was dein Training sonst verlangt (rund " + grenze + " g). Das ist der Preis des Defizits — die letzten harten Sätze fühlen sich zäh an.");
       } else {
         hinweise.push("Für dein Training wären rund " + grenze + " g Kohlenhydrate je kg gut, hier sind es " + text + "." +
-          (fettG > fettMin ? " Nimm sie vom Fett, das liegt noch über seiner Untergrenze." : " Mehr geht nur über mehr Kalorien insgesamt."));
+          (fettG > Math.round(Math.max(fettSoll, fettMin)) ? " Nimm sie vom Fett, das liegt noch über seinem Richtwert." : " Mehr geht nur über mehr Kalorien insgesamt."));
       }
     }
 
@@ -949,15 +1134,45 @@
      Wasser, Darminhalt, Salz, Zyklus. Zwei Einzelwerte zu vergleichen misst
      davon mehr als vom Trend. Die Gerade nimmt alle Punkte mit.
 
-     UND SIE HAELT DEN MUND, wenn die Grundlage zu duenn ist: unter drei
-     Wiegungen oder unter vierzehn Tagen kommt `belastbar: false` zurueck.
-     Eine Korrektur aus fuenf Tagen waere Rauschen mit Nachkommastelle. */
+     UND SIE HAELT DEN MUND, wenn die Grundlage zu duenn ist.
+
+     PRUEFRUNDE 3 (15.11.2026), nachsimuliert: bei einem Nutzer mit WIRKLICH
+     konstantem Gewicht (Tagesschwankung SD 0,5 kg) schwankte die alte
+     Korrektur bei 3 Wiegungen ueber 14 Tage mit SD 388 kcal und riet in 83 %
+     der Faelle zu einer Aenderung. Die Steigung durch wenige verrauschte
+     Punkte hat einen Standardfehler in der Groesse des Effekts. Darum jetzt:
+       - erst ab 21 Tagen und 8 Wiegungen;
+       - die ersten 14 Tage nach einem Zielwechsel zaehlen nicht (Glykogen
+         und Wasser — mit 7700 kcal/kg gelesen hiess das "iss mehr");
+       - Korrektur nur, wenn sie groesser ist als 2 Standardfehler;
+       - davon die Haelfte, hoechstens 250 kcal je Schritt;
+       - und wo der Kalorienzaehler genug vollstaendige Tage kennt, die
+         Rueckrechnung ueber die Aufnahme: Verbrauch = mittlere Aufnahme -
+         Steigung x Energiedichte (Sanghvi, Redman, Martin, Ravussin, Hall,
+         AJCN 2015, gegen doppelt markiertes Wasser geprueft). Die Formel
+         faellt dabei ganz heraus.
+     Evidenz A fuer das Rauschproblem, B fuer die Rueckrechnung, C fuer die
+     Schwellen. */
+  var VERLAUF_MIN_TAGE = 21;
+  var VERLAUF_MIN_PUNKTE = 8;
+  var VERLAUF_SPERRE_NACH_ZIELWECHSEL = 14;
+  var VERLAUF_MAX_SCHRITT = 250;
+  var AUFNAHME_MIN_TAGE = 14;
 
   function verlaufAuswerten(punkte, e) {
     e = e || {};
+    var TAG = 24 * 60 * 60 * 1000;
     var jetzt = e.jetzt ? new Date(e.jetzt).getTime() : Date.now();
     var fenster = zahl(e.tage) > 0 ? zahl(e.tage) : VERLAUF_FENSTER_TAGE;
-    var grenze = jetzt - fenster * 24 * 60 * 60 * 1000;
+    var grenze = jetzt - fenster * TAG;
+    var zielSeit = e.zielSeit ? Date.parse(e.zielSeit) : NaN;
+    if (isFinite(zielSeit)) grenze = Math.max(grenze, zielSeit + VERLAUF_SPERRE_NACH_ZIELWECHSEL * TAG);
+    /* datenAb (18.11.2026): seit wann die uebernommene Anpassung gilt. Aeltere
+       Wiegungen gehoeren zum alten Ziel — aus ihnen ein zweites Mal zu
+       korrigieren hiesse doppelt korrigieren. Keine Wasser-Sperre wie beim
+       Zielwechsel: 100 bis 250 kcal aendern den Glykogenstand kaum. */
+    var datenAb = e.datenAb ? Date.parse(e.datenAb) : NaN;
+    if (isFinite(datenAb)) grenze = Math.max(grenze, datenAb);
 
     var liste = (Array.isArray(punkte) ? punkte : [])
       .map(function (p) {
@@ -967,47 +1182,85 @@
       .sort(function (a, b) { return a.zeit - b.zeit; });
 
     var leer = {
-      punkte: liste.length, tage: 0, belastbar: false,
-      istProWoche: 0, sollProWoche: 0, korrekturKcal: 0, gewichtJetzt: 0
+      punkte: liste.length, tage: 0, belastbar: false, deutlich: false,
+      istProWoche: 0, sollProWoche: 0, korrekturKcal: 0, korrekturRohKcal: 0, seKcal: 0,
+      methode: null, verbrauchKcal: 0, aufnahmeTage: 0, gewichtJetzt: 0,
+      fehlenTage: VERLAUF_MIN_TAGE, fehlenPunkte: VERLAUF_MIN_PUNKTE
     };
-    if (liste.length < 2) return leer;
+    if (liste.length < 2) { leer.fehlenPunkte = Math.max(0, VERLAUF_MIN_PUNKTE - liste.length); return leer; }
 
-    var spanneTage = (liste[liste.length - 1].zeit - liste[0].zeit) / (24 * 60 * 60 * 1000);
+    var spanneTage = (liste[liste.length - 1].zeit - liste[0].zeit) / TAG;
     leer.tage = Math.round(spanneTage);
     leer.gewichtJetzt = liste[liste.length - 1].kg;
-    if (liste.length < 3 || spanneTage < 14) return leer;
+    leer.fehlenTage = Math.max(0, Math.ceil(VERLAUF_MIN_TAGE - spanneTage));
+    leer.fehlenPunkte = Math.max(0, VERLAUF_MIN_PUNKTE - liste.length);
+    if (liste.length < VERLAUF_MIN_PUNKTE || spanneTage < VERLAUF_MIN_TAGE) return leer;
 
-    // Ausgleichsgerade ueber (Tage seit dem ersten Punkt, Kilogramm).
-    var n = liste.length, sx = 0, sy = 0, sxy = 0, sxx = 0;
+    // Ausgleichsgerade ueber (Tage seit dem ersten Punkt, Kilogramm) mit
+    // Standardfehler der Steigung.
+    var n = liste.length, sx = 0, sy = 0;
+    var xs = [];
     for (var i = 0; i < n; i++) {
-      var x = (liste[i].zeit - liste[0].zeit) / (24 * 60 * 60 * 1000);
-      var y = liste[i].kg;
-      sx += x; sy += y; sxy += x * y; sxx += x * x;
+      var x = (liste[i].zeit - liste[0].zeit) / TAG;
+      xs.push(x); sx += x; sy += liste[i].kg;
     }
-    var nenner = n * sxx - sx * sx;
-    if (!(Math.abs(nenner) > 0)) return leer;
-    var steigung = (n * sxy - sx * sy) / nenner;      // kg je Tag
+    var mx = sx / n, my = sy / n, sxx = 0, sxy = 0;
+    for (var j = 0; j < n; j++) { sxx += (xs[j] - mx) * (xs[j] - mx); sxy += (xs[j] - mx) * (liste[j].kg - my); }
+    if (!(sxx > 0)) return leer;
+    var steigung = sxy / sxx;                         // kg je Tag
+    var ssr = 0;
+    for (var k = 0; k < n; k++) { var r = liste[k].kg - (my + steigung * (xs[k] - mx)); ssr += r * r; }
+    var seSteigung = Math.sqrt(ssr / (n - 2) / sxx); // kg je Tag
     var istProWoche = steigung * 7;
 
-    // Soll: die Rate, die zum gewaehlten Ziel gehoert, in Kilogramm je Woche.
+    // Soll: die Rate, die zum gewaehlten Ziel gehoert.
     var gewicht = zahl(e.gewichtKg) > 0 ? zahl(e.gewichtKg) : liste[liste.length - 1].kg;
     var rate = zahl(e.zielRateProWoche);
     var richtung = e.ziel === "abnehmen" ? -1 : e.ziel === "zunehmen" ? 1 : 0;
     var sollProWoche = richtung * gewicht * rate / 100;
+    var dichte = (richtung > 0 || (richtung === 0 && steigung > 0)) ? KCAL_JE_KG_ZUWACHS : KCAL_JE_KG_FETT;
 
-    // Abweichung in Kilogramm je Woche -> Kalorien je Tag. Wer zu langsam
-    // abnimmt, isst zu viel; das Vorzeichen dreht darum um.
-    var abweichung = istProWoche - sollProWoche;
-    var korrektur = -Math.round(abweichung * KCAL_JE_KG_FETT / 7);
+    // Rueckrechnung ueber die Aufnahme: nur vollstaendig eingetragene Tage
+    // im Zeitraum der Wiegungen (mind. 2 Mahlzeiten und 60 % des Ziels).
+    var ziel = zahl(e.zielKcal);
+    var von = liste[0].zeit, bis = liste[liste.length - 1].zeit + TAG;
+    var tage = (Array.isArray(e.aufnahme) ? e.aufnahme : []).filter(function (t) {
+      var z = Date.parse((t && t.d) || "");
+      return isFinite(z) && z >= von && z < bis && zahl(t.kcal) > 0 &&
+        zahl(t.mahlzeiten) >= 2 && (!(ziel > 0) || zahl(t.kcal) >= 0.6 * ziel);
+    });
+    var methode = "rate", verbrauch = 0, roh;
+    if (tage.length >= AUFNAHME_MIN_TAGE && ziel > 0) {
+      var mittel = tage.reduce(function (a, t) { return a + zahl(t.kcal); }, 0) / tage.length;
+      verbrauch = Math.round(mittel - steigung * dichte);
+      methode = "aufnahme";
+      // Neues Ziel = gemessener Verbrauch + geplante Abweichung.
+      roh = Math.round(verbrauch + zahl(e.abweichungKcal) - ziel);
+    } else {
+      // Wer zu langsam abnimmt, isst zu viel; das Vorzeichen dreht darum um.
+      roh = -Math.round((istProWoche - sollProWoche) * dichte / 7);
+    }
+    var seKcal = Math.round(seSteigung * dichte);
+    var deutlich = Math.abs(roh) > 2 * seKcal;
+    var korrektur = deutlich
+      ? Math.max(-VERLAUF_MAX_SCHRITT, Math.min(VERLAUF_MAX_SCHRITT, Math.round(roh / 2)))
+      : 0;
 
     return {
       punkte: n,
       tage: Math.round(spanneTage),
       belastbar: true,
+      deutlich: deutlich && korrektur !== 0,
       istProWoche: runde(istProWoche, 2),
       sollProWoche: runde(sollProWoche, 2),
       korrekturKcal: korrektur,
-      gewichtJetzt: liste[liste.length - 1].kg
+      korrekturRohKcal: roh,
+      seKcal: seKcal,
+      methode: methode,
+      verbrauchKcal: verbrauch,
+      aufnahmeTage: tage.length,
+      gewichtJetzt: liste[liste.length - 1].kg,
+      fehlenTage: 0, fehlenPunkte: 0
     };
   }
 
@@ -1088,7 +1341,7 @@
     // Schwelle, ab der sie ueberhaupt etwas aussagt.
     var linie = null;
     var spanneTage = (bisZeit - vonZeit) / TAG;
-    if (liste.length >= 3 && spanneTage >= 14) {
+    if (liste.length >= VERLAUF_MIN_PUNKTE && spanneTage >= VERLAUF_MIN_TAGE) {
       var n = liste.length, sx = 0, sy = 0, sxy = 0, sxx = 0;
       for (var i = 0; i < n; i++) {
         var x = (liste[i].zeit - vonZeit) / TAG;
@@ -1210,21 +1463,11 @@
     }
 
     if (gu.kfa.quelle === "bild") {
-      hinweise.push("Dein Körperfettanteil aus der Bilderreihe ist geschätzt — ein paar Prozentpunkte daneben sind normal. Er beeinflusst nur deine Abnehmrate, nicht den Grundumsatz.");
+      hinweise.push("Dein Körperfettanteil aus der Bilderreihe ist geschätzt — ein paar Prozentpunkte daneben sind normal. Er bestimmt deine Abnehmrate, nicht den Grundumsatz.");
     } else if (gu.kfa.quelle === "schaetzung") {
       hinweise.push("Dein Körperfettanteil ist nur aus BMI und Alter geschätzt und liegt bei Trainierten meist zu hoch. Er geht deshalb nicht in den Grundumsatz ein.");
     }
 
-    /* DIE GROESSE DES BEKANNTEN FEHLERS, beziffert statt nur benannt. */
-    if (gu.formel === "mifflin-st-jeor") {
-      var vergleich = tenHaaf(e);
-      var abstand = vergleich > 0 ? vergleich - gu.kcal : 0;
-      hinweise.push(
-        "Ohne gemessenen Körperfettanteil rechnen wir nach Mifflin-St Jeor. Bei Trainierten schätzt sie zu niedrig — an 1430 Athleten gemessen" +
-        (abstand > 0 ? ", bei dir um rund " + abstand + " kcal" : "") +
-        ". Zwei Minuten Maßband lösen das."
-      );
-    }
 
     var ab = neat({
       gewichtKg: gewicht,
@@ -1238,6 +1481,24 @@
     }
 
     var at = trainingProTag(e.einheiten, gewicht);
+
+    /* DIE GROESSE DES BEKANNTEN FEHLERS, beziffert statt nur benannt.
+       Ten-Haaf ist an 18- bis 35-jaehrigen Freizeitathleten mit rund 9 h
+       Training je Woche entwickelt; bei Untrainierten, Aelteren und
+       Adipoesen ist Mifflin die besser belegte Formel (Pruefrunde 3, Befund
+       10). Die Zahl steht darum nur fuer Trainierte bis rund 40 Jahre mit
+       mindestens 3 h je Woche; sonst der Satz ohne Zahl. */
+    if (gu.formel === "mifflin-st-jeor") {
+      var trainiert = e.trainingLevel !== "beginner" && zahl(e.alterJahre) > 0 && zahl(e.alterJahre) <= 40 &&
+        at.minutenProWoche >= 180;
+      var vergleich = trainiert ? tenHaaf(e) : 0;
+      var abstand = vergleich > 0 ? vergleich - gu.kcal : 0;
+      hinweise.push(
+        "Ohne gemessenen Körperfettanteil rechnen wir nach Mifflin-St Jeor. Bei Trainierten schätzt sie oft zu niedrig — an 1430 Athleten gemessen" +
+        (abstand > 0 ? ", bei dir um rund " + abstand + " kcal" : "") +
+        ". Zwei Minuten Maßband lösen das."
+      );
+    }
     if (at.einheitenGeschaetzt > 0 && at.einheitenAusPlan === 0) {
       hinweise.push("Der Trainingsanteil ist geschätzt. Sobald du Einheiten loggst, rechnen wir mit dem, was du wirklich gemacht hast.");
     }
@@ -1252,7 +1513,7 @@
     // Brutto minus Ruheanteil: was das Training UEBER den Grundumsatz hinaus
     // gekostet hat. Ohne Dauerangabe (Handeingabe) bleibt es beim Bruttowert
     // — dann fehlt schlicht die Grundlage fuer den Abzug.
-    var ruhe = ruheanteilKcal(at.minutenProTag, gu.kcal);
+    var ruhe = ruheanteilKcal(at.ruheMinutenProTag, gu.kcal);
     var trainingNetto = Math.max(0, at.kcal - ruhe);
 
     var ges = gesamtumsatz({
@@ -1269,11 +1530,13 @@
       ziel: e.ziel,
       kfaProzent: gu.kfa.prozent,
       kfaBelastbar: gu.kfa.belastbar,
+      kfaQuelle: gu.kfa.quelle,
       trainingLevel: e.trainingLevel,
       // Nur mit gemessenem Fettanteil: sonst waere die fettfreie Masse
       // geraten, und eine geratene Zahl darf die Vorgabe nicht anheben.
       magermasseKg: gu.kfa.belastbar ? gu.magermasseKg : 0,
-      trainingKcal: trainingNetto
+      trainingKcal: trainingNetto,
+      trainingMinutenProWoche: at.minutenProWoche
     });
 
     // Makros duerfen nur dann auf der Magermasse rechnen, wenn die auch
@@ -1291,7 +1554,9 @@
       // Der Kohlenhydratbedarf haengt am Trainingsumfang. Uebergeben wird der
       // BRUTTOwert der Woche: die Stufen sind an Trainingsstunden geeicht,
       // nicht am Nettozuwachs.
-      trainingKcalProWoche: at.kcalProWoche
+      trainingKcalProWoche: at.kcalProWoche,
+      // Seit Pruefrunde 3 nach Stunden gestaffelt (Burke 2011).
+      trainingMinutenProWoche: at.minutenProWoche
     });
 
     hinweise = hinweise.concat(ziel.hinweise, m.hinweise);
@@ -1315,6 +1580,7 @@
       trainingBruttoKcal: at.kcal,
       trainingRuheanteilKcal: ruhe,
       trainingKcalProWoche: at.kcalProWoche,
+      trainingMinutenProWoche: at.minutenProWoche,
       tefKcal: ges.tefKcal,
       gesamtumsatzKcal: ges.kcal,
       zielKcal: ziel.kcal,
@@ -1353,6 +1619,9 @@
     trainingProTag: trainingProTag,
     trainingAusLogs: trainingAusLogs,
     ruheanteilKcal: ruheanteilKcal,
+    istNettoSchaetzung: istNettoSchaetzung,
+    ernaehrungsKcal: ernaehrungsKcal,
+    kcalAusLeistung: kcalAusLeistung,
     gesamtumsatz: gesamtumsatz,
     zielKalorien: zielKalorien,
     zielRate: zielRate,
@@ -1367,6 +1636,7 @@
     berechnen: berechnen,
     KCAL_JE_G: KCAL_JE_G,
     KCAL_JE_KG_FETT: KCAL_JE_KG_FETT,
+    KCAL_JE_KG_ZUWACHS: KCAL_JE_KG_ZUWACHS,
     TEF_ANTEIL: TEF_ANTEIL,
     EA_HINWEIS: EA_HINWEIS,
     EA_UNTERGRENZE: EA_UNTERGRENZE,
